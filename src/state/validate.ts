@@ -10,7 +10,12 @@
  *   - then sanitises field by field: unknown problem slugs, malformed attempts, unknown ratings,
  *     mistake tags or pattern ids, and invalid dates are dropped and counted in `warnings`;
  *     settings are filled from defaults and clamped; a running mock or timer for an unknown
- *     slug is discarded.
+ *     slug is discarded. Every repair is counted, so the import preview is the owner's one chance to
+ *     notice a damaged file: a record whose attempts are not a list counts as a damaged record, and
+ *     notes that are not an object as damaged notes.
+ *   - folds drill results beyond the newest DRILL_KEEP into `drillArchive` (see schema.ts).
+ *   - a missing `onboarded` flag reads as true when the file holds any history (a restored backup is
+ *     never a first run) and false for an empty document; an explicit value is kept.
  * The result is always a complete, internally consistent AppData.
  */
 import { getProblem } from '../data'
@@ -19,6 +24,7 @@ import { addDays, isISODate } from '../domain/dates'
 import {
   clampSetting,
   createEmptyData,
+  foldDrills,
   isBlankNotes,
   isMockMix,
   isMockPool,
@@ -32,9 +38,11 @@ import {
   SETTINGS_LIMITS,
 } from './reducers'
 import { APP_ID, DEFAULT_PLAN_DAYS, EMPTY_NOTES, SCHEMA_VERSION } from './schema'
+import { TOPIC_BY_ID } from '../data'
 import type {
   AppData,
   Attempt,
+  DrillBucket,
   DrillResult,
   ISODate,
   MockConfig,
@@ -69,6 +77,7 @@ const plural = (n: number, noun: string, many = `${noun}s`) => `${n} ${n === 1 ?
 const WARNINGS = {
   unknownProblems: (n: number) => `Dropped ${plural(n, 'record')} for unknown problems.`,
   badRecords: (n: number) => `Dropped ${plural(n, 'damaged problem record')}.`,
+  badNotes: (n: number) => `Dropped ${plural(n, 'damaged set')} of notes.`,
   badAttempts: (n: number) => `Dropped ${plural(n, 'malformed attempt')}.`,
   badDates: (n: number) => `Dropped ${plural(n, 'attempt')} with invalid dates.`,
   futureDates: (n: number) => `Moved ${plural(n, 'entry', 'entries')} dated in the future to today.`,
@@ -89,6 +98,7 @@ function newTally(): Tally {
   return {
     unknownProblems: 0,
     badRecords: 0,
+    badNotes: 0,
     badAttempts: 0,
     badDates: 0,
     futureDates: 0,
@@ -152,19 +162,26 @@ function migrate(doc: Obj, version: number): Obj {
 function sanitize(doc: Obj, today: ISODate, now: number, tally: Tally): AppData {
   const updatedAt = isNumber(doc.updatedAt) ? doc.updatedAt : null
   const createdAt = isNumber(doc.createdAt) ? doc.createdAt : (updatedAt ?? now)
+  const problems = parseProblems(doc.problems, today, tally)
+  // Only the newest DRILL_KEEP results are kept one by one; a longer list (an old export) is folded.
+  const drills = foldDrills(parseDrills(doc.drills, today, tally), parseDrillArchive(doc.drillArchive, tally))
   return {
     app: APP_ID,
     version: SCHEMA_VERSION,
     createdAt,
     updatedAt: updatedAt ?? createdAt,
     settings: parseSettings(doc.settings, today, tally),
-    problems: parseProblems(doc.problems, today, tally),
-    drills: parseDrills(doc.drills, today, tally),
+    problems,
+    ...drills,
     mocks: parseMocks(doc.mocks, now, tally),
     timer: parseTimer(doc.timer, tally),
     session: parseSession(doc.session, tally),
     demo: doc.demo === true,
-    onboarded: doc.onboarded === true,
+    // A backup that lost its flag is not a first run: with history in it the welcome must not
+    // reopen over the restored data. Only an explicit false (or an empty document) is a first run.
+    onboarded:
+      doc.onboarded === true ||
+      (doc.onboarded === undefined && (Object.keys(problems).length > 0 || drills.drills.length > 0)),
   }
 }
 
@@ -227,6 +244,9 @@ function parseProblems(raw: unknown, today: ISODate, tally: Tally): AppData['pro
       tally.badRecords++
       continue
     }
+    // Attempts or notes of the wrong shape are damage, and the preview must say so.
+    if (value.attempts !== undefined && !Array.isArray(value.attempts)) tally.badRecords++
+    if (value.notes !== undefined && !isObject(value.notes)) tally.badNotes++
     const record: ProblemRecord = {
       attempts: parseAttempts(value.attempts, today, tally),
       notes: parseNotes(value.notes),
@@ -334,6 +354,39 @@ function parseDrills(raw: unknown, today: ISODate, tally: Tally): DrillResult[] 
       picked: item.picked,
       correct: item.correct,
       ms: item.ms,
+    })
+  }
+  return out
+}
+
+function parseDrillArchive(raw: unknown, tally: Tally): DrillBucket[] {
+  if (raw === undefined) return []
+  if (!Array.isArray(raw)) {
+    tally.badDrills++
+    return []
+  }
+  const out: DrillBucket[] = []
+  for (const item of raw) {
+    if (
+      !isObject(item) ||
+      !isText(item.topic) ||
+      !Object.hasOwn(TOPIC_BY_ID, item.topic) ||
+      !isPatternId(item.answer) ||
+      !isPatternId(item.picked) ||
+      typeof item.correct !== 'boolean' ||
+      !isNumber(item.count) ||
+      !Number.isInteger(item.count) ||
+      item.count < 1
+    ) {
+      tally.badDrills++
+      continue
+    }
+    out.push({
+      topic: item.topic as DrillBucket['topic'],
+      answer: item.answer,
+      picked: item.picked,
+      correct: item.correct,
+      count: item.count,
     })
   }
   return out
@@ -502,7 +555,7 @@ export function summarize(data: AppData): DataSummary {
     solved,
     attempts,
     notes,
-    drills: data.drills.length,
+    drills: data.drills.length + (data.drillArchive ?? []).reduce((n, b) => n + b.count, 0),
     mocks: data.mocks.filter((m) => m.status === 'done').length,
     firstDate,
     lastDate,

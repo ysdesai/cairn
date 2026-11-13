@@ -1,7 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { useLocation, useSearchParams } from 'react-router-dom'
 import { useProblemSheet } from '../../app/nav'
-import { Button, Empty, PageHeader, useHotkeys, useListCursor } from '../../ui'
+import { Button, Empty, PageHeader, useBlindSlugs, useHotkeys, useListCursor } from '../../ui'
 import { useDerived } from '../../state/hooks'
 import { Results } from './Results'
 import { Toolbar } from './Toolbar'
@@ -63,16 +63,19 @@ export default function ProblemsScreen() {
 
   // Everything but the status filter, so each status tab can show what it would give.
   const grades = filters.d.join(',')
+  const blindSlugs = useBlindSlugs()
   const base = useMemo(() => {
     const out: Match[] = []
     for (const view of derived.list) {
-      if (filters.topic !== 'all' && view.problem.topic !== filters.topic) continue
+      const blind = blindSlugs.has(view.problem.slug)
+      // Filtering by topic would show which topic a blind problem is in (by its being there or not).
+      if (filters.topic !== 'all' && (blind || view.problem.topic !== filters.topic)) continue
       if (grades && !grades.includes(view.problem.difficulty)) continue
-      const match = matchSearch(view, tokens)
+      const match = matchSearch(view, tokens, blind)
       if (match) out.push(match)
     }
     return out
-  }, [derived.list, tokens, filters.topic, grades])
+  }, [derived.list, tokens, filters.topic, grades, blindSlugs])
 
   const counts = useMemo(() => {
     const out = {} as Record<StatusFilter, number>

@@ -187,18 +187,30 @@ describe('buildSession', () => {
     expect(items.filter((i) => i.kind === 'review').map((i) => i.slug)).toEqual([EASY])
   })
 
-  it('adds at most three new problems of ordinary size', () => {
-    const items = build(120, { recs: MEDIUM_SLUGS.map((s) => rec(s)) })
+  it('adds at most three new problems when a fourth would not fit inside the budget', () => {
+    const items = build(100, { recs: MEDIUM_SLUGS.map((s) => rec(s)) })
     expect(kinds(items)).toEqual(['drill', 'new', 'new', 'new'])
-    // 3 x 30 = 90 of 120; a fourth would make 120, which fits, but ordinary problems stop at three.
+    // 3 x 30 = 90 of 100; a fourth makes 120, past the budget and past the 10% allowance.
     expect(items.filter((i) => i.kind === 'new')).toHaveLength(3)
   })
 
-  it('lets quick problems go past three, up to five, so a long easy route fills the time', () => {
+  it('goes past three, up to five, only while each still fits inside the budget', () => {
     const quick = EASY_SLUGS.map((s) => rec(s)) // 20 minutes each
-    expect(build(90, { recs: quick }).filter((i) => i.kind === 'new')).toHaveLength(4) // 80; a fifth makes 100 > 99
+    expect(build(90, { recs: quick }).filter((i) => i.kind === 'new')).toHaveLength(4) // 80; a fifth makes 100
     expect(build(120, { recs: quick }).filter((i) => i.kind === 'new')).toHaveLength(5)
     expect(build(200, { recs: quick }).filter((i) => i.kind === 'new')).toHaveLength(5)
+    // 3 x 20 + 30 = 90 fits 90 exactly; at 89 the fourth would need the 10% allowance, which it does not get.
+    const mixed = [rec(EASY), rec('valid-anagram'), rec('two-sum'), rec(MEDIUM)]
+    expect(build(90, { recs: mixed }).filter((i) => i.kind === 'new')).toHaveLength(4)
+    expect(build(89, { recs: mixed }).filter((i) => i.kind === 'new')).toHaveLength(3)
+  })
+
+  it('fills a first-run 90 minutes: three easy problems and the next one, no drill needed', () => {
+    // Nothing solved, so the route is the first problems of Arrays & Hashing: easy, easy, easy, medium.
+    const recs = ['contains-duplicate', 'valid-anagram', 'two-sum', 'group-anagrams'].map((s) => rec(s))
+    const items = build(90, { recs })
+    expect(kinds(items)).toEqual(['new', 'new', 'new', 'new'])
+    expect(minutesOf(items)).toBe(90)
   })
 
   it('lets the session run 10% over the budget for a new problem', () => {

@@ -1,7 +1,7 @@
 .panel {
   position: absolute;
   z-index: 3;
-  top: calc(var(--topbar-h) + 12px);
+  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 12px);
   right: 12px;
   bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
   display: flex;
@@ -16,13 +16,25 @@
   overflow: hidden;
 }
 
+.panel:focus {
+  outline: none;
+}
+
+/* Focus has been handed to the panel (a camp opened from the keyboard): say so with a ring. */
+.panel:focus-visible {
+  box-shadow:
+    inset 0 0 0 2px var(--focus),
+    var(--shadow-3);
+}
+
 .margin {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
   flex: none;
-  min-height: 52px;
-  padding: 8px 8px 8px 24px;
+  min-height: 48px;
+  padding: 6px 8px 6px 24px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -66,27 +78,27 @@
 }
 
 .intro {
-  padding: 22px 24px 4px;
+  padding: 18px 24px 8px;
 }
 
 .name {
-  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.375rem);
+  font-size: clamp(1.75rem, 1.2rem + 1vw, 2.125rem);
   text-wrap: balance;
 }
 
 .tagline {
-  margin-top: 8px;
+  margin-top: 6px;
   max-width: 44ch;
-  font-size: var(--text-md);
-  line-height: 1.5;
+  font-size: var(--text-base);
+  line-height: 1.45;
 }
 
-/* ---- Facts ---- */
+/* ---- Facts: one line of figures ---- */
 
 .facts {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  margin-top: 20px;
+  margin-top: 14px;
   border-block: 1px solid var(--line);
 }
 
@@ -94,14 +106,23 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 8px;
+  justify-content: center;
+  gap: 4px;
   min-width: 0;
-  padding: 12px 20px 12px 0;
+  padding: 10px 16px 10px 0;
 }
 
 .fact + .fact {
-  padding-left: 20px;
+  padding-left: 16px;
   border-left: 1px solid var(--line);
+}
+
+.fact:last-of-type {
+  padding-right: 0;
+}
+
+.factSolved {
+  justify-content: center;
 }
 
 .factStrength {
@@ -109,24 +130,24 @@
 }
 
 .ringText {
-  font-size: var(--text-xs);
+  font-size: 0.6875rem;
   color: var(--ink);
 }
 
 .strength {
-  font-size: 2.25rem;
+  font-size: 1.75rem;
   line-height: 1;
 }
 
 .uncharted {
-  font-size: 1.25rem;
-  line-height: 1.1;
+  font-size: 1.125rem;
+  line-height: 1.2;
 }
 
 .counts {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
   font-size: var(--text-sm);
   color: var(--ink-2);
   white-space: nowrap;
@@ -134,32 +155,70 @@
 
 .counts .num {
   color: var(--ink);
-  font-size: var(--text-md);
-  margin-right: 2px;
+  font-size: var(--text-base);
 }
 
-.fact:last-of-type {
-  padding-right: 0;
+/* Why the camp is where it is, in one sentence with the figures. */
+.note {
+  margin-top: 10px;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--ink-2);
+  text-wrap: pretty;
 }
 
-.weakness {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  padding: 10px 0 12px;
+.holding {
+  margin: 0 2px 0 8px;
+  color: var(--ink-3);
+}
+
+.note > .holding:first-child {
+  margin-left: 0;
+}
+
+/* ---- Route: the camps either side ---- */
+
+.route {
+  margin-top: 8px;
   border-top: 1px solid var(--line);
+}
+
+.routeHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 40px;
+  border-radius: var(--r-sm);
+  text-align: left;
+}
+
+.routeHead:hover :global(.eyebrow) {
+  color: var(--ink);
+}
+
+.routeSummary {
+  flex: 1 1 auto;
   font-size: var(--text-sm);
   color: var(--ink-2);
 }
 
-/* ---- Neighbours ---- */
+.chev {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.chevOpen {
+  transform: rotate(180deg);
+}
 
 .links {
   display: flex;
   flex-direction: column;
-  margin-top: 6px;
+  padding-bottom: 4px;
 }
 
 .neighbours {
@@ -168,12 +227,16 @@
   align-items: flex-start;
   gap: 0 16px;
   min-width: 0;
-  border-bottom: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+}
+
+.route .links .neighbours:first-child {
+  border-top: 0;
 }
 
 .neighbours > :global(.eyebrow) {
   flex: none;
-  width: 104px;
+  width: 96px;
   padding-top: 12px;
 }
 
@@ -216,14 +279,19 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  margin-top: 8px;
-  padding: 12px 24px;
+  margin-top: 4px;
+  padding: 10px 24px;
   background: var(--paper-raised);
   box-shadow: 0 1px 0 var(--line);
 }
 
 .content {
-  padding: 12px 24px 28px;
+  padding: 8px 24px 24px;
+}
+
+.lede {
+  font-size: var(--text-base);
+  line-height: 1.5;
 }
 
 /* The trail: a hairline joining each problem's mark to the next. */
@@ -239,7 +307,7 @@
 
 /* Keep the keyboard cursor's row clear of the sticky tab bar and the footer. */
 .trail [data-slug] {
-  scroll-margin-block: 72px 12px;
+  scroll-margin-block: 64px 12px;
 }
 
 .step::after {
@@ -269,7 +337,7 @@
 
 .footer {
   flex: none;
-  padding: 14px 24px;
+  padding: 12px 24px;
   border-top: 1px solid var(--line);
   background: var(--paper-raised);
 }
@@ -289,6 +357,10 @@
   text-align: center;
 }
 
+.grabber {
+  display: none;
+}
+
 /* ---- Phone: a bottom sheet resting on the tab bar. Not modal: the map stays live above it. ---- */
 
 @media (max-width: 760px) {
@@ -298,26 +370,74 @@
     right: 0;
     bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px));
     width: auto;
-    height: min(62dvh, calc(100dvh - var(--topbar-h) - var(--dock-h) - 24px));
+    /* A peek: about half the screen, so the camp that is open stays in sight above it. */
+    height: max(280px, min(54dvh, calc(100dvh - var(--topbar-h) - var(--dock-h) - 150px)));
     border-radius: var(--r-xl) var(--r-xl) 0 0;
   }
 
+  .expanded {
+    height: calc(100dvh - var(--topbar-h) - env(safe-area-inset-top, 0px) - var(--dock-h) - env(safe-area-inset-bottom, 0px) - 8px);
+  }
+
+  /* The header is the handle: tap it, or swipe it up and down. */
   .margin {
-    min-height: 48px;
-    padding-left: 16px;
+    min-height: 52px;
+    padding: 12px 6px 4px 16px;
+    touch-action: none;
+  }
+
+  .grabber {
+    position: absolute;
+    inset: 0 56px 0 0;
+    display: block;
+    border-radius: var(--r-xl) 0 0 0;
+  }
+
+  .grabber::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 36px;
+    height: 4px;
+    margin-left: -18px;
+    border-radius: 2px;
+    background: var(--line-3);
+  }
+
+  .margin > :not(.grabber) {
+    position: relative;
+    pointer-events: none;
   }
 
   .close {
     width: 40px;
     height: 40px;
+    pointer-events: auto;
   }
 
   .intro {
-    padding: 16px 16px 2px;
+    padding: 12px 16px 6px;
+  }
+
+  .name {
+    font-size: 1.625rem;
+  }
+
+  .facts {
+    margin-top: 10px;
+  }
+
+  .fact {
+    padding-right: 12px;
+  }
+
+  .fact + .fact {
+    padding-left: 12px;
   }
 
   .tabsBar {
-    padding: 10px 16px;
+    padding: 8px 16px;
   }
 
   .content {
@@ -325,15 +445,11 @@
   }
 
   .footer {
-    padding: 10px 16px;
-  }
-
-  .neighbours {
-    gap: 0 12px;
+    padding: 8px 16px;
   }
 
   .neighbours > :global(.eyebrow) {
-    width: 80px;
+    width: 84px;
     padding-top: 14px;
   }
 
@@ -347,24 +463,8 @@
     font-size: 0.9375rem;
   }
 
-  .name {
-    font-size: 1.75rem;
-  }
-
-  .tagline {
-    font-size: var(--text-base);
-  }
-
-  .facts {
-    margin-top: 14px;
-  }
-
-  .fact {
-    padding-right: 14px;
-  }
-
-  .fact + .fact {
-    padding-left: 14px;
+  .routeHead {
+    min-height: 44px;
   }
 
   .trail {

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { isTopicId, ROADMAP_ORDER, TOPIC_BY_ID } from '../../data'
@@ -213,45 +213,22 @@ function MapView() {
         </motion.div>
       </div>
 
-      <TopicPanelHost
-        selected={selected}
-        derived={derived}
-        phone={phone}
-        openedBy={openedBy}
-        onSelect={onSelect}
-        panelRef={setRef}
-      />
+      <AnimatePresence>
+        {selected ? (
+          <TopicPanel
+            key="panel"
+            view={derived.topics[selected]}
+            topics={derived.topics}
+            queue={derived.queue}
+            today={derived.today}
+            phone={phone}
+            openedBy={openedBy}
+            onSelect={onSelect}
+            onClose={() => onSelect(null)}
+            panelRef={setRef}
+          />
+        ) : null}
+      </AnimatePresence>
     </div>
-  )
-}
-
-/** The panel, mounted while a camp is open so it can slide away when it closes. */
-function TopicPanelHost({
-  selected,
-  derived,
-  phone,
-  openedBy,
-  onSelect,
-  panelRef,
-}: {
-  selected: TopicId | null
-  derived: ReturnType<typeof useDerived>
-  phone: boolean
-  openedBy: OpenedBy
-  onSelect: (id: TopicId | null, by?: OpenedBy) => void
-  panelRef: (el: HTMLElement | null) => void
-}) {
-  return (
-    <TopicPanel
-      view={selected ? derived.topics[selected] : null}
-      topics={derived.topics}
-      queue={derived.queue}
-      today={derived.today}
-      phone={phone}
-      openedBy={openedBy}
-      onSelect={onSelect}
-      onClose={() => onSelect(null)}
-      panelRef={panelRef}
-    />
   )
 }

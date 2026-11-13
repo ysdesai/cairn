@@ -37,7 +37,7 @@ export function glowsFor(layout: Layout, topics: Record<TopicId, TopicView>, her
       // 3 of 5 glows less than 5 of 5, and a camp with one problem solved only just kindles.
       out.push({ ...base, r: (120 + 120 * view.progress) * u, i: 0.36 + 0.5 * view.progress, alpen: false, core: view.progress >= 0.5 })
     } else if (view.state === 'ready' && (view.recommended || here === id)) {
-      out.push({ ...base, r: 110 * u, i: 0.34, alpen: false, core: false })
+      out.push({ ...base, r: 130 * u, i: 0.5, alpen: false, core: true })
     }
   }
   return out

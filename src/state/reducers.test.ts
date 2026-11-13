@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { PatternId } from '../data/types'
 import { diffDays } from '../domain/dates'
 import {
   abandonMock,
@@ -6,6 +7,7 @@ import {
   createEmptyData,
   deleteAttempt,
   endMock,
+  foldDrills,
   logAttempt,
   makeId,
   markMockProblem,
@@ -24,7 +26,7 @@ import {
   updateSettings,
 } from './reducers'
 import type { AttemptInput } from './reducers'
-import { DEFAULT_PLAN_DAYS, SCHEMA_VERSION } from './schema'
+import { DEFAULT_PLAN_DAYS, DRILL_KEEP, SCHEMA_VERSION } from './schema'
 import type { AppData, MockConfig, MockResult, SessionPlan } from './schema'
 
 const TODAY = '2026-11-12'
@@ -490,6 +492,25 @@ describe('recordDrill', () => {
     expect(recordDrill(one, result, TODAY, T0 + 2).drills).toHaveLength(2)
   })
 
+  it('keeps the newest 5,000 results and folds older ones into counts, so the document stays small', () => {
+    const miss = { slug: TWO_SUM, answer: 'hashing', picked: 'two-pointers', correct: false, ms: 900 } as const
+    const hit = { slug: TWO_SUM, answer: 'hashing', picked: 'hashing', correct: true, ms: 900 } as const
+    let data: AppData = empty()
+    for (let i = 0; i < DRILL_KEEP; i++) data = recordDrill(data, i % 2 ? hit : miss, TODAY, T0 + i)
+    expect(data.drills).toHaveLength(DRILL_KEEP)
+    expect(data.drillArchive).toBeUndefined()
+
+    // The next two push the two oldest (a miss, then a hit) into the archive.
+    data = recordDrill(data, hit, TODAY, T0 + DRILL_KEEP)
+    data = recordDrill(data, hit, TODAY, T0 + DRILL_KEEP + 1)
+    expect(data.drills).toHaveLength(DRILL_KEEP)
+    expect(data.drills[0].at).toBe(T0 + 2)
+    expect(data.drillArchive).toEqual([
+      { topic: 'arrays-hashing', answer: 'hashing', picked: 'two-pointers', correct: false, count: 1 },
+      { topic: 'arrays-hashing', answer: 'hashing', picked: 'hashing', correct: true, count: 1 },
+    ])
+  })
+
   it('returns the same object for an unknown problem or pattern', () => {
     const start = empty()
     const good = { slug: TWO_SUM, answer: 'hashing', picked: 'hashing', correct: true, ms: 1000 } as const
@@ -518,6 +539,44 @@ describe('recordDrill', () => {
       T0 + 1,
     )
     expect(next.drills[0].ms).toBe(0)
+  })
+})
+
+describe('foldDrills', () => {
+  const result = (n: number, picked: PatternId = 'hashing') => ({
+    at: n,
+    date: TODAY,
+    slug: TWO_SUM,
+    answer: 'hashing' as const,
+    picked,
+    correct: picked === 'hashing',
+    ms: 100,
+  })
+
+  it('changes nothing at or under the cap', () => {
+    const drills = Array.from({ length: DRILL_KEEP }, (_, i) => result(i))
+    expect(foldDrills(drills, undefined)).toEqual({ drills })
+    expect(foldDrills([], undefined)).toEqual({ drills: [] })
+  })
+
+  it('merges into an existing archive by topic, answer, pick and outcome', () => {
+    const drills = Array.from({ length: DRILL_KEEP + 3 }, (_, i) => result(i, i < 2 ? 'stack' : 'hashing'))
+    const archive = [{ topic: 'arrays-hashing' as const, answer: 'hashing' as const, picked: 'stack' as const, correct: false, count: 10 }]
+    const folded = foldDrills(drills, archive)
+    expect(folded.drills).toHaveLength(DRILL_KEEP)
+    expect(folded.drillArchive).toEqual([
+      { topic: 'arrays-hashing', answer: 'hashing', picked: 'stack', correct: false, count: 12 },
+      { topic: 'arrays-hashing', answer: 'hashing', picked: 'hashing', correct: true, count: 1 },
+    ])
+    // The input archive is not touched.
+    expect(archive[0].count).toBe(10)
+  })
+
+  it('counts a card whose problem has gone under its pattern\'s home topic', () => {
+    const drills = [{ ...result(0), slug: 'no-such-problem' }, ...Array.from({ length: DRILL_KEEP }, (_, i) => result(i + 1))]
+    expect(foldDrills(drills, undefined).drillArchive).toEqual([
+      { topic: 'arrays-hashing', answer: 'hashing', picked: 'hashing', correct: true, count: 1 },
+    ])
   })
 })
 
@@ -655,6 +714,13 @@ describe('mock interviews', () => {
     expect(endMock(ended, T0 + 6000)).toBe(ended)
     const none = empty()
     expect(endMock(none, T0)).toBe(none)
+  })
+
+  it('clamps endedAt to the mock length when it expired while the tab was closed', () => {
+    const length = MOCK_CONFIG.minutes * 60_000
+    const ended = frozen(endMock(started(), T0 + length + 3 * 3_600_000))
+    expect(lastMock(ended).endedAt).toBe(T0 + length)
+    expect(ended.updatedAt).toBe(T0 + length + 3 * 3_600_000)
   })
 
   it('abandons an active mock', () => {

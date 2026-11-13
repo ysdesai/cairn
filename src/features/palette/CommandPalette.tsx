@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { getProblem, PROBLEMS, PROBLEMS_BY_TOPIC, TOPICS, TOPIC_BY_ID } from '../../data'
 import type { Problem, Topic } from '../../data/types'
 import { NAV, ROUTES, useProblemSheet } from '../../app/nav'
+import { exitDemo } from '../../app/demo'
 import { openShortcuts, useUi } from '../../app/ui'
 import { buildSession } from '../../domain/session'
 import type { Derived, ProblemView } from '../../domain/types'
@@ -13,22 +14,28 @@ import { useActions, useCanUndo, useData, useDerived, useSettings, useTimer, use
 import { setThemeChoice, useTheme } from '../../state/prefs'
 import type { ThemeChoice } from '../../state/schema'
 import { downloadExport } from '../../state/transfer'
-import { Button, Cairn, Chip, cx, GradeMark, Kbd, LAYER, statusLabel, Terrain, toast, useHotkeyLayer } from '../../ui'
+import { Button, Cairn, Chip, cx, GradeMark, Kbd, LAYER, statusLabel, Terrain, toast, useFocusReturn, useHotkeyLayer } from '../../ui'
 import { CAMP_STATE, CampGlyph } from '../map/campState'
-import { highlightRanges, normalize, scoreItem, tokens, type Searchable } from './search'
+import { highlightRanges, joinDimensions, normalize, scoreItem, tokens, type Searchable } from './search'
 import s from './CommandPalette.module.css'
 
 // ---------------------------------------------------------------------------------------------
 // Static indexes: the catalog never changes, so normalize it once.
 
 const field = (text: string, weight = 1) => ({ text: normalize(text), weight })
+/** A name plus its "1d" spelling, so typing "1d" finds "1-D DP". */
+const nameFields = (text: string, weight = 1) => {
+  const spaced = normalize(text)
+  const joined = joinDimensions(spaced)
+  return joined === spaced ? [{ text: spaced, weight }] : [{ text: spaced, weight }, { text: joined, weight }]
+}
 
 const PROBLEM_INDEX: { problem: Problem; search: Searchable; bare: Searchable }[] = PROBLEMS.map((problem) => {
   const topic = TOPIC_BY_ID[problem.topic]
   const own = [field(problem.title), field(String(problem.number)), field(problem.slug, 0.8)]
   return {
     problem,
-    search: { fields: [...own, field(topic.name, 0.5), field(topic.short, 0.5), field(topic.id, 0.5)] },
+    search: { fields: [...own, ...nameFields(topic.name, 0.5), ...nameFields(topic.short, 0.5), field(topic.id, 0.5)] },
     // While a mock is running its problems are found by title and number only: the topic is the hint.
     bare: { fields: own },
   }
@@ -36,7 +43,7 @@ const PROBLEM_INDEX: { problem: Problem; search: Searchable; bare: Searchable }[
 
 const TOPIC_INDEX: { topic: Topic; search: Searchable }[] = TOPICS.map((topic) => ({
   topic,
-  search: { fields: [field(topic.name), field(topic.short), field(topic.id, 0.8), field(topic.tagline, 0.3), field('topic camp', 0.2)] },
+  search: { fields: [...nameFields(topic.name), ...nameFields(topic.short), field(topic.id, 0.8), field(topic.tagline, 0.3), field('topic camp', 0.2)] },
 }))
 
 // ---------------------------------------------------------------------------------------------
@@ -146,6 +153,11 @@ export default function CommandPalette() {
   const setOpen = useUi((u) => u.setPaletteOpen)
   const keepFocus = useRef(true)
   useHotkeyLayer(LAYER.palette, open)
+  const focus = useFocusReturn({
+    onOpenAutoFocus: () => {
+      keepFocus.current = true
+    },
+  })
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -154,12 +166,11 @@ export default function CommandPalette() {
         <Dialog.Content
           className={s.content}
           aria-describedby={undefined}
-          onOpenAutoFocus={() => {
-            keepFocus.current = true
-          }}
+          onOpenAutoFocus={focus.onOpenAutoFocus}
           onCloseAutoFocus={(event) => {
             // A command that moved us somewhere else owns focus now; do not pull it back.
             if (!keepFocus.current) event.preventDefault()
+            else focus.onCloseAutoFocus(event)
           }}
         >
           <Dialog.Title className="sr-only">Search and commands</Dialog.Title>
@@ -395,7 +406,7 @@ function Palette({ onClose, onMoved }: { onClose: () => void; onMoved: () => voi
             icon: <LogOut />,
             title: 'Exit demo',
             meta: 'Back to your own data',
-            run: finish(() => void actions.clearDemo()),
+            run: finish(() => void exitDemo()),
           }
         : {
             id: 'action:demo',

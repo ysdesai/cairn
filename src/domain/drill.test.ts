@@ -206,6 +206,28 @@ describe('buildDrillStats', () => {
     })
   })
 
+  it('counts a folded archive exactly as it would count the results themselves', () => {
+    const hit = (n: number) => result('hashing', 'hashing', { at: n })
+    const miss = (n: number) => result('hashing', 'stack', { at: n })
+    const all = [hit(1), miss(2), hit(3), miss(4), miss(5), result('heap', 'heap', { at: 6 })]
+    const whole = buildDrillStats(all, TODAY)
+    // The first four results folded away; only the last two are kept as they are.
+    const archive = [
+      { topic: 'arrays-hashing' as const, answer: 'hashing' as const, picked: 'hashing' as const, correct: true, count: 2 },
+      { topic: 'arrays-hashing' as const, answer: 'hashing' as const, picked: 'stack' as const, correct: false, count: 2 },
+    ]
+    const folded = buildDrillStats(all.slice(4), TODAY, archive)
+    expect(folded.total).toBe(whole.total)
+    expect(folded.correct).toBe(whole.correct)
+    expect(folded.accuracy).toBe(whole.accuracy)
+    expect(folded.byTopic).toEqual(whole.byTopic)
+    expect(folded.byPattern.map((p) => [p.pattern.id, p.seen, p.correct, p.confusedWith])).toEqual(
+      whole.byPattern.map((p) => [p.pattern.id, p.seen, p.correct, p.confusedWith]),
+    )
+    // Folded answers are never "today", whatever their date was.
+    expect(folded.today).toBe(whole.today - 4)
+  })
+
   it('does not change the list it is given', () => {
     const drills = Object.freeze([result('hashing', 'stack'), result('heap', 'heap')])
     expect(() => buildDrillStats(drills, TODAY)).not.toThrow()

@@ -1,13 +1,15 @@
 import { CHEATSHEETS } from '../../data'
 import type { TopicId } from '../../data/types'
+import type { ReactNode } from 'react'
 import { CodeBlock, cx } from '../../ui'
 import s from './FieldGuide.module.css'
 
-/** The topic's cheat sheet, set out as a page of a field guide: signs, idea, template, pitfalls. */
-export default function FieldGuide({ topic }: { topic: TopicId }) {
+/** The topic's cheat sheet, set out as a page of a field guide: signs, idea, template, pitfalls. `before` is set above it. */
+export default function FieldGuide({ topic, before }: { topic: TopicId; before?: ReactNode }) {
   const guide = CHEATSHEETS[topic]
   return (
     <div className={s.guide}>
+      {before}
       <section aria-labelledby="fg-signs">
         <h3 id="fg-signs" className={cx('eyebrow', s.head)}>
           Signs you are here

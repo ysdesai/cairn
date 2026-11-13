@@ -330,6 +330,11 @@
 }
 
 @media (pointer: coarse) {
+  .clearText {
+    width: 40px;
+    height: 40px;
+  }
+
   .slash {
     display: none;
   }

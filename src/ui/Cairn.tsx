@@ -29,13 +29,15 @@ interface CairnProps {
   className?: string
   /** Accessible description. Defaults to "n of 5 revisions cleared". */
   label?: string
+  /** Purely visual: hide it from assistive technology (something beside it already says the same). */
+  decorative?: boolean
 }
 
 /**
  * The cairn: how far a problem has climbed the revision ladder, as stacked stones.
  * Empty outlines are rungs still to come; a flag means mastered.
  */
-export function Cairn({ step, mastered, size = 20, tone = 'ink', animate, className, label }: CairnProps) {
+export function Cairn({ step, mastered, size = 20, tone = 'ink', animate, className, label, decorative }: CairnProps) {
   const id = useId()
   const placed = Math.max(0, Math.min(CAIRN_STONES, Math.round(step)))
   const done = mastered || placed >= CAIRN_STONES
@@ -46,10 +48,11 @@ export function Cairn({ step, mastered, size = 20, tone = 'ink', animate, classN
       width={(size * 24) / 30}
       height={size}
       viewBox="0 0 24 30"
-      role="img"
-      aria-label={text}
+      role={decorative ? undefined : 'img'}
+      aria-label={decorative ? undefined : text}
+      aria-hidden={decorative || undefined}
     >
-      <title>{text}</title>
+      {decorative ? null : <title>{text}</title>}
       <defs>
         <linearGradient id={id} x1="0" y1="1" x2="1" y2="0">
           <stop offset="0" stopColor="var(--glow-3)" />

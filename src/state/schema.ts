@@ -108,6 +108,24 @@ export interface DrillResult {
   ms: number
 }
 
+/**
+ * Older drill answers, folded together. Only the newest DRILL_KEEP answers are kept one by one
+ * (`AppData.drills`); anything older is counted here by what the drill statistics need (topic,
+ * pattern, what was picked, right or wrong) and the card itself is forgotten. This keeps the
+ * single stored document small for someone who drills every day for years.
+ */
+export interface DrillBucket {
+  /** The topic the card counted toward (its problem's, else its pattern's home topic). */
+  topic: TopicId
+  answer: PatternId
+  picked: PatternId
+  correct: boolean
+  count: number
+}
+
+/** Individual drill results kept in the document before the oldest are folded into buckets. */
+export const DRILL_KEEP = 5000
+
 // ---------------------------------------------------------------------------------------------
 // Mock interviews
 
@@ -215,6 +233,8 @@ export interface AppData {
   /** Keyed by problem slug. Only problems that have an attempt or notes appear. */
   problems: Record<string, ProblemRecord>
   drills: DrillResult[]
+  /** Answers older than the newest DRILL_KEEP, folded. Absent until there are any. */
+  drillArchive?: DrillBucket[]
   mocks: MockSession[]
   timer: TimerState | null
   session: SessionPlan | null

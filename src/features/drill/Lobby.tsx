@@ -36,7 +36,7 @@ export function Lobby({ config, onConfig, onStart }: LobbyProps) {
   const sourceOptions: ChoiceOption<Source>[] = [
     { value: 'all', label: 'All problems' },
     { value: 'solved', label: 'Solved only', locked: solvedLocked ? 'Log a solve first and it opens here.' : undefined },
-    { value: 'weak', label: 'Weak patterns', locked: weakLocked ? `Opens once a pattern has ${WEAK_NEEDS} answers.` : undefined },
+    { value: 'weak', label: 'Weak patterns', locked: weakLocked ? `Opens once a pattern has ${WEAK_NEEDS} answers and you have missed some of them.` : undefined },
   ]
   const held = mockHeld(derived).size
 
@@ -132,7 +132,7 @@ export function Lobby({ config, onConfig, onStart }: LobbyProps) {
           {solvedLocked || weakLocked ? (
             <span className={s.locked}>
               {solvedLocked ? ' Solved only opens after your first solve.' : ''}
-              {weakLocked ? ` Weak patterns opens once a pattern has ${WEAK_NEEDS} answers.` : ''}
+              {weakLocked ? ` Weak patterns opens once a pattern has ${WEAK_NEEDS} answers and you have missed some of them.` : ''}
             </span>
           ) : null}
         </p>

@@ -155,6 +155,11 @@
   flex: none;
 }
 
+/* The digit is the option's marker, not just a hint: it stays on touch screens. */
+.keycap kbd {
+  display: inline-flex;
+}
+
 .optionName {
   min-width: 0;
   flex: 1 1 auto;

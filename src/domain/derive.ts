@@ -21,7 +21,7 @@ export function derive(data: AppData, today: ISODate): Derived {
   const problems: Record<string, ProblemView> = Object.fromEntries(list.map((v) => [v.problem.slug, v]))
 
   const { settings } = data
-  const drill = buildDrillStats(data.drills, today)
+  const drill = buildDrillStats(data.drills, today, data.drillArchive)
   const topics = buildTopicViews(list, drill, settings.targets)
   const counts = buildCounts(list)
   const queue = buildQueue(list, today, settings.dailyReviewCap)

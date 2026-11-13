@@ -9,6 +9,10 @@
  * A pattern in problem.alt is also an accepted solution, so it is never offered, neither as a
  * decoy nor as filler: picking it would be marked wrong unfairly.
  *
+ * buildDrillStats counts the results in `drills` and, as a third argument, the folded older ones
+ * (`AppData.drillArchive`): totals, per-pattern accuracy, what each was confused with and the
+ * per-topic tallies are the same either way; only `today` looks at individual dates.
+ *
  * DrillStats.weakest: the patterns with at least 3 answers and accuracy under 80%, lowest first, at
  * most 5. Empty until a pattern is both tested and missed, so a pattern the user gets right is never
  * called weak and the "weak patterns" source stays locked until there is one.
@@ -22,7 +26,7 @@
  */
 import { getProblem, PATTERN_BY_ID, PATTERNS, recordByTopic, TOPIC_BY_ID } from '../data'
 import type { PatternId, Problem, TopicId } from '../data/types'
-import type { DrillResult, ISODate } from '../state/schema'
+import type { DrillBucket, DrillResult, ISODate } from '../state/schema'
 import { pickWeighted, shuffle, type Rng } from './rng'
 import type { DrillStats, PatternStat } from './types'
 
@@ -37,39 +41,56 @@ const CONFUSED_LIMIT = 3
 const UNSEEN_WEIGHT = 1.6
 const RECENT_FACTOR = 0.15
 
-export function buildDrillStats(drills: readonly DrillResult[], today: ISODate): DrillStats {
-  const byAnswer = new Map<PatternId, DrillResult[]>()
+export function buildDrillStats(
+  drills: readonly DrillResult[],
+  today: ISODate,
+  /** Older answers, folded (see DrillBucket). They count everywhere except `today`. */
+  archive: readonly DrillBucket[] = [],
+): DrillStats {
+  interface Tally {
+    seen: number
+    right: number
+    wrong: Map<PatternId, number>
+  }
+  const byAnswer = new Map<PatternId, Tally>()
   const byTopic = recordByTopic(() => ({ seen: 0, correct: 0 }))
+  let total = 0
   let correct = 0
   let todayCount = 0
-  for (const d of drills) {
-    const results = byAnswer.get(d.answer) ?? []
-    results.push(d)
-    byAnswer.set(d.answer, results)
-    if (d.correct) correct += 1
-    if (d.date === today) todayCount += 1
-    // A card whose problem has left the list still counts, under its pattern's home topic.
-    const topic: TopicId | undefined = getProblem(d.slug)?.topic ?? PATTERN_BY_ID[d.answer]?.topic
+
+  const count = (answer: PatternId, picked: PatternId, right: boolean, topic: TopicId | undefined, n: number) => {
+    const tally = byAnswer.get(answer) ?? { seen: 0, right: 0, wrong: new Map<PatternId, number>() }
+    tally.seen += n
+    if (right) tally.right += n
+    else tally.wrong.set(picked, (tally.wrong.get(picked) ?? 0) + n)
+    byAnswer.set(answer, tally)
+    total += n
+    if (right) correct += n
     if (topic) {
-      byTopic[topic].seen += 1
-      if (d.correct) byTopic[topic].correct += 1
+      byTopic[topic].seen += n
+      if (right) byTopic[topic].correct += n
     }
   }
 
+  for (const b of archive) count(b.answer, b.picked, b.correct, b.topic, b.count)
+  for (const d of drills) {
+    if (d.date === today) todayCount += 1
+    // A card whose problem has left the list still counts, under its pattern's home topic.
+    count(d.answer, d.picked, d.correct, getProblem(d.slug)?.topic ?? PATTERN_BY_ID[d.answer]?.topic, 1)
+  }
+
   const byPattern: PatternStat[] = PATTERNS.map((pattern) => {
-    const results = byAnswer.get(pattern.id) ?? []
-    const right = results.filter((r) => r.correct).length
-    const wrong = new Map<PatternId, number>()
-    for (const r of results) if (!r.correct) wrong.set(r.picked, (wrong.get(r.picked) ?? 0) + 1)
+    const tally = byAnswer.get(pattern.id)
+    const seen = tally?.seen ?? 0
     return {
       pattern,
-      seen: results.length,
-      correct: right,
-      accuracy: results.length ? right / results.length : null,
+      seen,
+      correct: tally?.right ?? 0,
+      accuracy: seen ? (tally?.right ?? 0) / seen : null,
       // Stable sort: equal counts keep the order in which they were first picked.
-      confusedWith: [...wrong]
-        .map(([id, count]) => ({ pattern: id, count }))
-        .sort((a, b) => b.count - a.count)
+      confusedWith: [...(tally?.wrong ?? [])]
+        .map(([id, n]) => ({ pattern: id, count: n }))
+        .sort((x, y) => y.count - x.count)
         .slice(0, CONFUSED_LIMIT),
     }
   })
@@ -82,9 +103,9 @@ export function buildDrillStats(drills: readonly DrillResult[], today: ISODate):
     .slice(0, WEAK_LIMIT)
 
   return {
-    total: drills.length,
+    total,
     correct,
-    accuracy: drills.length ? correct / drills.length : null,
+    accuracy: total ? correct / total : null,
     today: todayCount,
     byPattern,
     weakest,

@@ -112,6 +112,22 @@
   color: var(--ink-3);
 }
 
+@media (pointer: coarse) {
+  .link {
+    min-height: 40px;
+    align-items: center;
+  }
+}
+
+.importAlert {
+  padding: var(--s-3);
+  border-left: 3px solid var(--danger);
+  border-radius: var(--r-sm);
+  background: var(--danger-wash);
+  color: var(--danger-ink);
+  line-height: 1.55;
+}
+
 .spin {
   animation: spin 900ms linear infinite;
 }
@@ -271,7 +287,7 @@
   }
 
   .rung :global(.eyebrow) {
-    font-size: 9.5px;
+    font-size: var(--text-2xs);
     letter-spacing: 0.06em;
   }
 

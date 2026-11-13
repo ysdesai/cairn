@@ -41,6 +41,12 @@
   min-width: 0;
 }
 
+@media (pointer: coarse) {
+  .shortcuts button {
+    min-width: 44px;
+  }
+}
+
 .shortcuts {
   display: flex;
   flex-wrap: wrap;

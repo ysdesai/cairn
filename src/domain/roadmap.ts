@@ -10,6 +10,10 @@
  * `recommended` marks the topics to work on now: active topics first, then ready ones, both in
  * ROADMAP_ORDER, at most MAX_RECOMMENDED in total. With no history that is Arrays & Hashing alone.
  * It is advice only; nothing is ever locked.
+ *
+ * Strength (see strength.ts) exists only for a topic with at least one solved problem: `complete`
+ * and `active` topics have it, `ready` and `ahead` ones have strength null and confidence 'none'
+ * even if they have been drilled (the drill figure is still in `parts.drill`).
  */
 import { ROADMAP_ORDER, TOPIC_BY_ID, recordByTopic } from '../data'
 import type { Difficulty, TopicId } from '../data/types'

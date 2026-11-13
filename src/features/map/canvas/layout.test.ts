@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { TOPIC_BY_ID, TOPIC_EDGES } from '../../../data'
 import type { TopicId } from '../../../data/types'
 import { boxesOverlap, distToLine, lineHitsBox, linesCross, trailCurve, trimEnds, type Box } from './geometry'
+import { marksOf } from './fit'
 import { LAYOUTS, RING, labelLines, nameLines } from './layout'
 
 /** The hand placement is the point of this sheet, so it is checked like code: nothing may drift into anything else. */
@@ -74,6 +75,20 @@ describe.each(Object.values(LAYOUTS))('$id composition', (layout) => {
         if (d < 90) hits.push(`${a} and ${b} are ${Math.round(d)} apart`)
       }
     }
+    expect(hits).toEqual([])
+  })
+
+  it('sets the scale bar and the north arrow inside the neatline, clear of every camp, name and trail', () => {
+    const hits: string[] = []
+    marksOf(layout).forEach((mark, i) => {
+      const name = i === 0 ? 'scale bar' : 'north arrow'
+      if (mark.x0 < 6 || mark.x1 > layout.width - 6 || mark.y0 < 6 || mark.y1 > layout.height - 6) hits.push(`${name} leaves the neatline`)
+      for (const id of ids) {
+        if (boxesOverlap(mark, box(id), 4)) hits.push(`${name} meets the name of ${id}`)
+        if (boxesOverlap(mark, ring(id), 4)) hits.push(`${name} meets ${id}`)
+      }
+      for (const t of trails) if (lineHitsBox(t.line, mark, 4)) hits.push(`${name} meets ${t.from}>${t.to}`)
+    })
     expect(hits).toEqual([])
   })
 

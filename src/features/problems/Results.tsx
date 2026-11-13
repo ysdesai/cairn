@@ -7,7 +7,7 @@ import type { TopicId } from '../../data/types'
 import { diffDays } from '../../domain/dates'
 import type { Derived, ProblemView } from '../../domain/types'
 import { RATING_META } from '../../state/schema'
-import { Chip, Meter, ProblemRow, cx, listContainer, listItem, statusLabel, type ListCursor } from '../../ui'
+import { Chip, Meter, ProblemRow, cx, listContainer, useBlindSlugs, listItem, statusLabel, type ListCursor } from '../../ui'
 import { ROUTES } from '../../app/nav'
 import { CampRail, campAnchor, type RailCamp } from './CampRail'
 import { SORT_OPTIONS, campNumber, normalize, wordPattern, type Match, type Snippet, type SortKey } from './filters'
@@ -47,6 +47,7 @@ const isPhone = () => window.matchMedia(PHONE).matches
  * sort. Matches are ordered so that exact number matches come first; they are set apart under their own rule.
  */
 export function Results({ matches, sort, tokens, filtered, cursor, topics, today, onOpen }: ResultsProps) {
+  const blindSlugs = useBlindSlugs()
   const phone = useSyncExternalStore(subscribePhone, isPhone, () => false)
 
   // Rows that appear later (after a filter change) should simply be there, not animate in again.
@@ -67,12 +68,19 @@ export function Results({ matches, sort, tokens, filtered, cursor, topics, today
     const byTopic = new Map<TopicId, { match: Match; index: number }[]>()
     matches.forEach((match, index) => {
       if (index < pinCount) return
+      // A blind problem sits under no topic: its camp would give it away.
+      if (blindSlugs.has(match.view.problem.slug)) return
       const list = byTopic.get(match.view.problem.topic) ?? []
       list.push({ match, index })
       byTopic.set(match.view.problem.topic, list)
     })
     return ROADMAP_ORDER.filter((id) => byTopic.has(id)).map((id) => ({ id, rows: byTopic.get(id)! }))
-  }, [matches, sort, pinCount])
+  }, [matches, sort, pinCount, blindSlugs])
+
+  const blindRows = useMemo(
+    () => (sort === 'roadmap' ? matches.map((match, index) => ({ match, index })).filter(({ match, index }) => index >= pinCount && blindSlugs.has(match.view.problem.slug)) : []),
+    [matches, sort, pinCount, blindSlugs],
+  )
 
   const camps = useMemo<RailCamp[]>(
     () =>
@@ -136,6 +144,15 @@ export function Results({ matches, sort, tokens, filtered, cursor, topics, today
               <span className={cx('eyebrow', 'num')}>{pinned.length}</span>
             </div>
             <ul className={s.list}>{pinned.map((match, index) => renderRow(match, index, true))}</ul>
+          </section>
+        ) : null}
+        {blindRows.length > 0 ? (
+          <section className={s.group} aria-label="In your running mock">
+            <div className={s.flatHead}>
+              <span className="eyebrow">In your running mock</span>
+              <span className={cx('eyebrow', 'num')}>{blindRows.length}</span>
+            </div>
+            <ul className={s.list}>{blindRows.map(({ match, index }) => renderRow(match, index, false))}</ul>
           </section>
         ) : null}
         {groups ? (

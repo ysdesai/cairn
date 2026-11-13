@@ -15,6 +15,7 @@ import { buildContours, fbm, hill, valueNoise } from '../../../ui'
 import { boxesOverlap, curveThrough, distToLine, lineHitsBox, type Box, type Pt } from './geometry'
 import { labelLines, nameLines, RING, type Composition, type Layout } from './layout'
 import { buildRoutes } from './routes'
+import { simplifyPath } from './simplify'
 
 /** Contours every INTERVAL metres, an index line every fifth. */
 const INTERVAL = 100
@@ -25,6 +26,8 @@ const MAJOR_EVERY = 5
 const MARGIN = 3
 const SHADE_LIFT = 1.6
 const SHADE_GAIN = 2.4
+/** How far a thinned contour may stray from the traced one, in sheet units: well under a pixel at any zoom. */
+const THIN = 0.45
 
 export interface ElevationLabel {
   x: number
@@ -283,7 +286,7 @@ export function buildTerrain(layout: Layout): Terrain {
   const shapes = trace(Array.from({ length: LINES }, (_, i) => lo + step * (i + 1)))
   const fine = trace(Array.from({ length: LINES + 1 }, (_, i) => lo + step * (i + 0.5)))
   const majors = shapes.filter((s) => s.major)
-  const lines = shapes.map((s) => ({ d: s.d, major: s.major, band: Math.min(7, Math.floor((s.index + 1) / MAJOR_EVERY)) }))
+  const lines = shapes.map((s) => ({ d: simplifyPath(s.d, THIN), major: s.major, band: Math.min(7, Math.floor((s.index + 1) / MAJOR_EVERY)) }))
 
   // Where nothing else should be set: camp symbols and their names, with a little room.
   const avoid: Box[] = ids.map((id) => {
@@ -301,9 +304,9 @@ export function buildTerrain(layout: Layout): Terrain {
 
   return {
     id: layout.id,
-    bands: majors.slice(0, 7).map((s) => s.d),
+    bands: majors.slice(0, 7).map((s) => simplifyPath(s.d, THIN)),
     lines,
-    fine: fine.map((s) => s.d).join(''),
+    fine: fine.map((s) => simplifyPath(s.d, THIN)).join(''),
     shade: shading(grid, cols, rows, cell, step),
     lake: lakeShapes(layout, inLake),
     stream,

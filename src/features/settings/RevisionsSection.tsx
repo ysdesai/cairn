@@ -59,8 +59,8 @@ export function RevisionsSection() {
           ))}
         </ol>
         <p className={s.footnote}>
-          Each gap is counted from the revision before it. Mastery lands about <span className="num">{mastered.elapsed}</span> days after the first solve, and
-          the gaps stretch or shrink a little with how each revision went.
+          Each gap is counted from the revision before it. Mastery lands up to about <span className="num">{mastered.elapsed}</span> days after the first solve, sooner when
+          revisions on their due date are rated Easy. The gaps stretch or shrink a little with how each revision went.
         </p>
       </div>
     </Section>

@@ -13,18 +13,19 @@ How I want this to go:
 
 Keep replies short. Ask one thing at a time.`
 
-export function coachPrompt(problem: Problem): string {
+/** `mockRunning`: the problem is part of a blind mock, so the prompt must not name its topic. */
+export function coachPrompt(problem: Problem, mockRunning = false): string {
   const topic = TOPIC_BY_ID[problem.topic]
   return [
     COACH_BRIEF,
     '',
     `Problem: ${problem.title} (LeetCode ${problem.number}, ${problem.difficulty})`,
     `URL: ${problem.url}`,
-    `Where it sits in my study plan: ${topic.name}. Do not treat that as a hint to give me.`,
+    ...(mockRunning ? [] : [`Where it sits in my study plan: ${topic.name}. Do not treat that as a hint to give me.`]),
     'My language: Python',
   ].join('\n')
 }
 
-export function coachUrl(problem: Problem): string {
-  return `https://claude.ai/new?q=${encodeURIComponent(coachPrompt(problem))}`
+export function coachUrl(problem: Problem, mockRunning = false): string {
+  return `https://claude.ai/new?q=${encodeURIComponent(coachPrompt(problem, mockRunning))}`
 }

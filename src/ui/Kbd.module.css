@@ -32,3 +32,11 @@
   box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.26);
   color: inherit;
 }
+
+/* Touch-only devices have no keyboard to press these. A caller that uses a key as a marker (the drill's option
+   numbers) or is the shortcut reference itself overrides this on its own keycaps. */
+@media (hover: none) and (pointer: coarse) {
+  .kbd {
+    display: none;
+  }
+}

@@ -2,8 +2,8 @@
 
 .root {
   /* How strongly the lit ground and the stars show: low sun on paper by day, the lit massif by night. */
-  --light-gain: 0.62;
-  --bloom-gain: 0.6;
+  --light-gain: 0.42;
+  --bloom-gain: 0.5;
   --star-op: 0;
   position: relative;
   width: 100%;
@@ -150,14 +150,13 @@
 .contour {
   fill: none;
   stroke: var(--contour);
-  stroke-width: 0.6;
+  stroke-width: calc(0.6px * var(--ink, 1));
   stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
 }
 
 .index {
   stroke: var(--contour-strong);
-  stroke-width: 1.05;
+  stroke-width: calc(1.05px * var(--ink, 1));
 }
 
 /* Close-up detail: supplementary contours and woodland appear as the sheet is brought nearer. */
@@ -168,8 +167,8 @@
 }
 
 .fine {
-  stroke-width: 0.55;
-  stroke-dasharray: 4 3;
+  stroke-width: calc(0.55px * var(--ink, 1));
+  stroke-dasharray: calc(4px * var(--ink, 1)) calc(3px * var(--ink, 1));
 }
 
 .trees {

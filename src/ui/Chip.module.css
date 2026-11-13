@@ -125,7 +125,6 @@
 .count {
   font-family: var(--font-mono);
   font-size: var(--text-2xs);
-  opacity: 0.7;
 }
 
 @media (max-width: 760px), (pointer: coarse) {

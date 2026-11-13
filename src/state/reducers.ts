@@ -14,6 +14,7 @@ import {
   DEFAULT_REVIEW_CAP,
   DEFAULT_SESSION_MINUTES,
   DEFAULT_TARGETS,
+  DRILL_KEEP,
   EMPTY_NOTES,
   MISTAKE_TAGS,
   MOCK_MIX_META,
@@ -24,6 +25,7 @@ import type {
   AppData,
   Attempt,
   AttemptSource,
+  DrillBucket,
   DrillResult,
   ISODate,
   MistakeTag,
@@ -375,7 +377,34 @@ export function recordDrill(
     correct: result.correct === true,
     ms,
   }
-  return touch(data, now, { drills: [...data.drills, drill] })
+  return touch(data, now, foldDrills([...data.drills, drill], data.drillArchive))
+}
+
+/**
+ * Keep the newest DRILL_KEEP results as they are and fold the older ones into per-topic,
+ * per-pattern, per-pick tallies. Returns the changes to put on the document: `drills`, and
+ * `drillArchive` only when there is one. Under the cap it changes nothing.
+ */
+export function foldDrills(
+  drills: DrillResult[],
+  archive: readonly DrillBucket[] | undefined,
+): Pick<AppData, 'drills' | 'drillArchive'> {
+  const excess = drills.length - DRILL_KEEP
+  if (excess <= 0) return archive && archive.length > 0 ? { drills, drillArchive: [...archive] } : { drills }
+  const buckets = new Map<string, DrillBucket>()
+  const add = (bucket: DrillBucket) => {
+    const key = `${bucket.topic}|${bucket.answer}|${bucket.picked}|${bucket.correct}`
+    const known = buckets.get(key)
+    if (known) known.count += bucket.count
+    else buckets.set(key, { ...bucket })
+  }
+  for (const bucket of archive ?? []) add(bucket)
+  for (const d of drills.slice(0, excess)) {
+    // The topic a card counted toward: its problem's, else its pattern's home topic.
+    const topic = getProblem(d.slug)?.topic ?? PATTERN_BY_ID[d.answer]?.topic
+    if (topic) add({ topic, answer: d.answer, picked: d.picked, correct: d.correct, count: 1 })
+  }
+  return { drills: drills.slice(excess), drillArchive: [...buckets.values()] }
 }
 
 // --- solve timer -------------------------------------------------------------------------------
@@ -470,7 +499,9 @@ export function endMock(data: AppData, now: number): AppData {
   const index = data.mocks.findLastIndex((m) => m.status === 'running')
   const mock = data.mocks[index]
   if (!mock) return data
-  return replaceMock(data, index, { ...mock, status: 'review', endedAt: now }, now)
+  // A mock that ran out while the tab was closed ended when its clock did, not when the person came back.
+  const endedAt = Math.min(now, mock.startedAt + mock.config.minutes * 60_000)
+  return replaceMock(data, index, { ...mock, status: 'review', endedAt }, now)
 }
 
 /**

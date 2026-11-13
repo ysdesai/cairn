@@ -1,12 +1,16 @@
-import { memo, useId } from 'react'
+import { memo, useId, type Ref } from 'react'
 import type { Layout } from './layout'
 import s from './MapCanvas.module.css'
 import type { Terrain } from './terrain'
 
 const pathOf = (pts: readonly (readonly [number, number])[]) => pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join('')
 
-/** Tints, hillshade, contours, lake, stream and elevation figures. Static: it never re-renders on pan, zoom or selection. */
-export const TerrainLayer = memo(function TerrainLayer({ layout, terrain }: { layout: Layout; terrain: Terrain }) {
+/**
+ * Tints, hillshade, contours, lake, stream and elevation figures. Static: it never re-renders on pan, zoom or selection.
+ * The contour lines are drawn in sheet units and kept a constant width on screen through `--ink`, which the camera sets
+ * on `groupRef` to 1 / zoom: cheaper to paint than letting the browser undo the zoom on every vertex of every line.
+ */
+export const TerrainLayer = memo(function TerrainLayer({ layout, terrain, groupRef }: { layout: Layout; terrain: Terrain; groupRef: Ref<SVGGElement> }) {
   const id = useId().replace(/:/g, '')
   const { width: W, height: H } = layout
   const { shade, lake, stream, labels } = terrain
@@ -25,7 +29,7 @@ export const TerrainLayer = memo(function TerrainLayer({ layout, terrain }: { la
   )
 
   return (
-    <g className={s.terrain} aria-hidden="true">
+    <g ref={groupRef} className={s.terrain} aria-hidden="true">
       <defs>
         <clipPath id={`${id}-clip`}>
           <rect x={0} y={0} width={W} height={H} />

@@ -10,6 +10,11 @@ export function normalize(text: string): string {
     .trim()
 }
 
+/** The way people type dimensions: "1 d dp" also reads "1d dp". Takes normalized text. */
+export function joinDimensions(text: string): string {
+  return text.replace(/(\d) ([a-z])\b/g, '$1$2')
+}
+
 export function tokens(query: string): string[] {
   return normalize(query).split(' ').filter(Boolean)
 }

@@ -153,14 +153,18 @@ function problemTags(view: ProblemView): string[] {
 }
 
 /** Does every word of the query hit this problem somewhere? If a word lands only in tags or notes, say where. */
-export function matchSearch(view: ProblemView, tokens: string[]): Match | null {
+/**
+ * `blind`: the problem belongs to a running mock, so only its title and number may match; its topic, tags and
+ * notes would give the approach away.
+ */
+export function matchSearch(view: ProblemView, tokens: string[], blind = false): Match | null {
   if (tokens.length === 0) return { view, snippet: null, exact: false }
   const { problem, record } = view
   const title = plain(problem.title)
   const number = String(problem.number)
   const topic = plain(`${TOPIC_BY_ID[problem.topic].name} ${TOPIC_BY_ID[problem.topic].short}`)
-  const tags = problemTags(view)
-  const notes = record
+  const tags = blind ? [] : problemTags(view)
+  const notes = record && !blind
     ? NOTE_FIELDS.map((f) => ({ label: f.label, text: record.notes[f.key].replace(/\s+/g, ' ').trim() })).filter((f) => f.text)
     : []
 
@@ -173,7 +177,7 @@ export function matchSearch(view: ProblemView, tokens: string[]): Match | null {
     if (digits && number === token) exact = true
     const word = normalize(token)
     if (!word) continue
-    if (hit(title, token, word) || hit(topic, token, word) || (digits && number.startsWith(token))) continue
+    if (hit(title, token, word) || (!blind && hit(topic, token, word)) || (digits && number.startsWith(token))) continue
     const found = tags.filter((t) => hit(plain(t), token, word))
     if (found.length) {
       fromTag ??= view.solved ? { kind: 'tag', text: found.join(' \u00b7 ') } : { kind: 'hidden-tag' }

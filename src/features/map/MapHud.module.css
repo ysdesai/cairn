@@ -74,13 +74,13 @@
 }
 
 .strip .titleInner {
-  gap: 4px;
-  padding: 9px 12px 10px;
+  gap: 2px;
+  padding: 8px 12px 9px;
 }
 
 .strip .headline {
-  font-size: 1.0625rem;
-  line-height: 1.2;
+  font-size: 1rem;
+  line-height: 1.25;
   text-wrap: pretty;
 }
 
@@ -92,7 +92,8 @@
 }
 
 .strip .big {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .strip .reached {
@@ -100,9 +101,18 @@
   margin-left: auto;
 }
 
+/* The ruler shrinks to a hairline along the strip's foot. */
 .strip .scale {
-  height: 8px;
-  margin-top: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  margin: 0;
+}
+
+.strip .scaleTicks {
+  display: none;
 }
 
 /* Scale bar */

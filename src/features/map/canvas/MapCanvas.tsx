@@ -54,6 +54,7 @@ export default function MapCanvas({ topics, selected, onSelect, here, inset, fur
   const reduce = useReducedMotion() ?? false
   const rootRef = useRef<HTMLDivElement | null>(null)
   const layerRef = useRef<SVGGElement | null>(null)
+  const terrainRef = useRef<SVGGElement | null>(null)
   const tipRef = useRef<HTMLDivElement | null>(null)
   const topProbe = useRef<HTMLDivElement | null>(null)
   const bottomProbe = useRef<HTMLDivElement | null>(null)
@@ -143,6 +144,7 @@ export default function MapCanvas({ topics, selected, onSelect, here, inset, fur
     here,
     onMove: (cam) => {
       placeTipRef.current()
+      terrainRef.current?.style.setProperty('--ink', (1 / cam.k).toFixed(4))
       // Close-up detail switches on by zoom, through one attribute the stylesheet reads.
       const ratio = cam.k / Math.max(0.05, cameraRef.current.baseScale())
       const level = ratio > 1.9 ? 'in' : ratio > 1.35 ? 'mid' : 'out'
@@ -287,6 +289,11 @@ export default function MapCanvas({ topics, selected, onSelect, here, inset, fur
     placeTip()
   }, [tipId, placeTip, size.width, size.height])
 
+  // The terrain arrives after the camera has been placed: give its lines their width.
+  useLayoutEffect(() => {
+    terrainRef.current?.style.setProperty('--ink', (1 / cameraRef.current.current().k).toFixed(4))
+  }, [terrain])
+
   const tipView = tipId ? topics[tipId] : null
 
   const tabStop = stop ?? selected ?? here ?? ROADMAP_ORDER[0]
@@ -310,7 +317,7 @@ export default function MapCanvas({ topics, selected, onSelect, here, inset, fur
           </defs>
           <g ref={layerRef}>
             <SheetUnder layout={layout} />
-            {terrain ? <TerrainLayer layout={layout} terrain={terrain} /> : null}
+            {terrain ? <TerrainLayer layout={layout} terrain={terrain} groupRef={terrainRef} /> : null}
             <Stars layout={layout} />
             <LightLayer layout={layout} glows={glows} walked={walked} />
             <SheetOver layout={layout} />

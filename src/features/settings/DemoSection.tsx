@@ -1,5 +1,6 @@
 import { LoaderCircle, Play, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
+import { exitDemo } from '../../app/demo'
 import { useActions, useData } from '../../state/hooks'
 import { Button, Chip, toast } from '../../ui'
 import { Section } from './Section'
@@ -41,7 +42,10 @@ export function DemoSection() {
               icon={busy ? <LoaderCircle className={s.spin} /> : <RotateCcw />}
               disabled={busy}
               aria-busy={busy}
-              onClick={() => void run(() => actions.clearDemo(), { message: 'Your data is back', detail: 'The demo has ended.' })}
+              onClick={() => {
+                setBusy(true)
+                void exitDemo().finally(() => setBusy(false))
+              }}
             >
               {busy ? 'Restoring' : 'Exit demo and restore my data'}
             </Button>

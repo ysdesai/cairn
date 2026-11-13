@@ -198,6 +198,23 @@ describe('missing fields', () => {
     const raw = { ...base(), demo: 'yes', onboarded: 1 }
     expect(parseOk(raw).data).toMatchObject({ demo: false, onboarded: false })
   })
+
+  it('reads a missing onboarded flag as true when the file holds history: a backup is not a first run', () => {
+    const raw = base()
+    delete raw.onboarded
+    expect(parseOk(raw).data.onboarded).toBe(true)
+    // History in drills alone counts too.
+    const drillsOnly = { ...createEmptyData(TODAY, T0), drills: DOC.drills } as Record<string, unknown>
+    delete drillsOnly.onboarded
+    expect(parseOk(roundTrip(drillsOnly)).data.onboarded).toBe(true)
+  })
+
+  it('leaves a missing flag false for an empty document, and an explicit false alone', () => {
+    const empty = roundTrip(createEmptyData(TODAY, T0)) as Record<string, unknown>
+    delete empty.onboarded
+    expect(parseOk(empty).data.onboarded).toBe(false)
+    expect(parseOk({ ...base(), onboarded: false }).data.onboarded).toBe(false)
+  })
 })
 
 describe('problems and attempts', () => {
@@ -292,6 +309,31 @@ describe('problems and attempts', () => {
     expect(parseOk(raw).warnings).toEqual(['Dropped 1 damaged problem record.'])
   })
 
+  it('counts a record whose attempts are not a list, so the preview shows the loss', () => {
+    const raw = base()
+    const lost = raw.problems['two-sum'].attempts.length
+    raw.problems['two-sum'].attempts = 'oops'
+    const result = parseOk(raw)
+    expect(result.warnings).toEqual(['Dropped 1 damaged problem record.'])
+    // Its notes survive, and the summary shows exactly what was lost.
+    expect(result.data.problems['two-sum'].attempts).toEqual([])
+    expect(summarize(result.data).attempts).toBe(summarize(DOC).attempts - lost)
+    for (const bad of [{}, 7, null, true]) {
+      const again = base()
+      again.problems['two-sum'].attempts = bad
+      expect(parseOk(again).warnings, JSON.stringify(bad)).toEqual(['Dropped 1 damaged problem record.'])
+    }
+  })
+
+  it('counts notes that are not an object, and says nothing for a record that simply has none', () => {
+    const raw = base()
+    raw.problems['two-sum'].notes = 'oops'
+    expect(parseOk(raw).warnings).toEqual(['Dropped 1 damaged set of notes.'])
+    const none = base()
+    delete none.problems['valid-anagram'].notes
+    expect(parseOk(none).warnings).toEqual([])
+  })
+
   it('does not mutate its input', () => {
     const raw = base()
     raw.problems['nope'] = {}
@@ -361,6 +403,45 @@ describe('drills', () => {
     const result = parseOk(raw)
     expect(result.data.drills).toEqual(DOC.drills)
     expect(result.warnings).toEqual(['Dropped 8 damaged drill results.'])
+  })
+
+  it('folds results beyond the newest 5,000 into per-pattern counts, keeping every total', () => {
+    const raw = base()
+    const good = raw.drills[0] // right: hashing
+    const miss = raw.drills[1] // wrong: picked two-pointers
+    raw.drills = Array.from({ length: 5003 }, (_, i) => ({ ...(i % 3 === 0 ? miss : good), at: i }))
+    const result = parseOk(raw)
+    expect(result.warnings).toEqual([])
+    expect(result.data.drills).toHaveLength(5000)
+    expect(result.data.drills[0].at).toBe(3)
+    const archive = result.data.drillArchive!
+    expect(archive.reduce((n, b) => n + b.count, 0)).toBe(3)
+    expect(archive).toContainEqual({ topic: 'arrays-hashing', answer: 'hashing', picked: 'two-pointers', correct: false, count: 1 })
+    expect(archive).toContainEqual({ topic: 'arrays-hashing', answer: 'hashing', picked: 'hashing', correct: true, count: 2 })
+    expect(summarize(result.data).drills).toBe(5003)
+  })
+
+  it('reads a stored archive back, dropping and counting damaged buckets', () => {
+    const raw = base()
+    const bucket = { topic: 'trees', answer: 'tree-dfs', picked: 'tree-bfs', correct: false, count: 4 }
+    raw.drillArchive = [
+      bucket,
+      { ...bucket, topic: 'nowhere' },
+      { ...bucket, answer: 'sorcery' },
+      { ...bucket, count: 0 },
+      { ...bucket, count: 1.5 },
+      { ...bucket, correct: 'no' },
+      3,
+    ]
+    const result = parseOk(raw)
+    expect(result.data.drillArchive).toEqual([bucket])
+    expect(result.warnings).toEqual(['Dropped 6 damaged drill results.'])
+    expect(summarize(result.data).drills).toBe(DOC.drills.length + 4)
+    expect(parseOk({ ...base(), drillArchive: 'x' }).warnings).toEqual(['Dropped 1 damaged drill result.'])
+  })
+
+  it('has no archive when there is nothing to fold', () => {
+    expect(parseOk(base()).data.drillArchive).toBeUndefined()
   })
 
   it('starts empty when drills are not a list', () => {

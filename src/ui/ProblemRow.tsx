@@ -2,7 +2,7 @@ import { ChevronRight, Lock } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { TOPIC_BY_ID } from '../data'
 import type { ProblemView } from '../domain/types'
-import { Cairn } from './Cairn'
+import { Cairn, CAIRN_STONES } from './Cairn'
 import { Chip } from './Chip'
 import { cx } from './cx'
 import { useBlindSlugs } from './blind'
@@ -43,6 +43,10 @@ export function ProblemRow({ view, onOpen, showTopic = true, trailing, note, det
   const status = statusLabel(view)
   const blindSlugs = useBlindSlugs()
   const hidden = blind ?? blindSlugs.has(problem.slug)
+  // The cairn is decoration so the row's name starts with the title. When the default chip already states the
+  // status, nothing more is needed; otherwise the cairn's words follow the title for screen readers.
+  const chipStates = trailing === undefined && !!status
+  const cairnText = !view.solved ? 'Not attempted' : view.status === 'mastered' ? 'Mastered' : `${Math.round(view.srs?.step ?? 0)} of ${CAIRN_STONES} revisions cleared`
   return (
     <button
       type="button"
@@ -53,9 +57,9 @@ export function ProblemRow({ view, onOpen, showTopic = true, trailing, note, det
     >
       <span className={s.glyph}>
         {view.solved ? (
-          <Cairn step={view.srs?.step ?? 0} mastered={view.status === 'mastered'} tone={view.status === 'due' ? 'ember' : 'ink'} size={22} />
+          <Cairn step={view.srs?.step ?? 0} mastered={view.status === 'mastered'} tone={view.status === 'due' ? 'ember' : 'ink'} size={22} decorative />
         ) : (
-          <span className={s.todo} aria-label="Not attempted" role="img" />
+          <span className={s.todo} aria-hidden="true" />
         )}
       </span>
       <span className={s.text}>
@@ -75,6 +79,7 @@ export function ProblemRow({ view, onOpen, showTopic = true, trailing, note, det
           <GradeMark difficulty={problem.difficulty} label />
           {note ? <span className={s.note}>{note}</span> : null}
         </span>
+        {chipStates ? null : <span className="sr-only">{cairnText}</span>}
         {detail && !hidden ? <span className={s.detail}>{detail}</span> : null}
       </span>
       <span className={s.trailing}>

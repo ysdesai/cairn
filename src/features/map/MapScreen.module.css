@@ -12,17 +12,16 @@
   inset: 0;
 }
 
-/* A faint veil so the wordmark and top-bar controls stay legible over the drawing. */
+/* The top bar's own ground: nothing of the drawing prints through the wordmark or the buttons. */
 .veil {
   position: absolute;
   inset: 0 0 auto;
-  height: calc(var(--topbar-h) + 28px);
-  background: linear-gradient(to bottom, var(--paper), transparent);
-  opacity: 0.8;
+  height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 22px);
+  background: linear-gradient(to bottom, var(--paper) calc(100% - 22px), transparent);
   pointer-events: none;
 }
 
-/* Marginalia sit in the gutters and never over the middle of the map. */
+/* Marginalia sit in the margins of the drawing and never over a camp or a trail. */
 .hud {
   position: absolute;
   inset: 0;
@@ -36,14 +35,20 @@
 
 .titleSlot {
   position: absolute;
-  top: calc(var(--topbar-h) + 12px);
+  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 12px);
   left: 16px;
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    visibility 0s linear;
 }
 
 .legendSlot {
   position: absolute;
   left: 16px;
   bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    visibility 0s linear;
 }
 
 .cameraSlot {
@@ -52,8 +57,19 @@
   bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
 }
 
+/* With a camp open on a phone: gone from view and from the tab order, so the strip of map is clear. */
+.stowed {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-2) var(--ease-out),
+    visibility 0s linear var(--dur-2);
+}
+
 @media (max-width: 760px) {
   .titleSlot {
+    top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 6px);
     left: 12px;
   }
 
@@ -65,5 +81,11 @@
   .cameraSlot {
     right: 12px;
     bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  /* The buttons ride at the top of the strip of map above the sheet, out of the way of the open camp. */
+  .cameraTop {
+    top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 8px);
+    bottom: auto;
   }
 }

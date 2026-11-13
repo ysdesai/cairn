@@ -4,7 +4,7 @@ import { useMemo, useRef, useState, type ReactNode } from 'react'
 import { formatDate } from '../../domain/dates'
 import { useActions, useData, useToday } from '../../state/hooks'
 import type { AppData } from '../../state/schema'
-import { useStore } from '../../state/store'
+import { VOLATILE_STORAGE_MESSAGE, useStore } from '../../state/store'
 import { downloadExport, readImportFile } from '../../state/transfer'
 import { summarize, type DataSummary } from '../../state/validate'
 import { Button, Frame, confirm, fade, toast } from '../../ui'
@@ -71,6 +71,7 @@ export function DataSection() {
   const [state, setState] = useState<ImportState>({ phase: 'idle' })
   const fileRef = useRef<HTMLInputElement>(null)
 
+  const volatile = useStore((state) => state.storageError === VOLATILE_STORAGE_MESSAGE)
   const hasHistory = summary.attempts > 0 || summary.notes > 0 || summary.drills > 0 || summary.mocks > 0
 
   const exportNow = () => {
@@ -101,7 +102,7 @@ export function DataSection() {
     if (state.phase !== 'ready') return
     const incoming = summarize(state.data)
     const ok = await confirm({
-      title: 'Replace your data with this file?',
+      title: incoming.solved === 0 && hasHistory ? 'This file holds no solved problems. Replace your data with it?' : 'Replace your data with this file?',
       body: (
         <div className={s.confirmBody}>
           <p>
@@ -149,10 +150,14 @@ export function DataSection() {
     <Section
       no="05"
       title="Your data"
-      blurb="Everything lives in this browser, in one file you can export. Clearing site data would erase it, so keep a copy somewhere safe."
+      blurb={
+        volatile
+          ? 'This browser is not keeping anything: what you log is gone when the tab closes. Use Export to save a copy you can import later.'
+          : 'Everything lives in this browser, in one file you can export. Clearing site data would erase it, so keep a copy somewhere safe.'
+      }
     >
       {data.demo ? <p className={s.note}>The demo is loaded. The figures below describe the demo, not your own history.</p> : null}
-      <Figures summary={summary} label="Stored in this browser" />
+      <Figures summary={summary} label={volatile ? 'Held for this tab only' : 'Stored in this browser'} />
       {!hasHistory ? <p className={s.footnote}>Solved problems, revisions and notes will be counted here as you log them.</p> : null}
 
       <div className={s.actions}>
@@ -214,6 +219,11 @@ export function DataSection() {
                         ))}
                       </ul>
                     </div>
+                  ) : null}
+                  {incoming.solved === 0 && hasHistory ? (
+                    <p className={s.importAlert} role="alert">
+                      This file holds no solved problems, but what is stored here has history. Importing it would replace that history with an empty plan.
+                    </p>
                   ) : null}
                   <p className={s.footnote}>
                     {hasHistory ? (

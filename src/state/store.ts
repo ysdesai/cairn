@@ -1,6 +1,19 @@
 /**
  * The one store. It holds the document, applies reducers, saves through the storage adapter,
  * keeps an undo stack, and raises the events the celebrations listen for.
+ *
+ * Several tabs: the adapter's `subscribe` (localStorage: the `storage` event) delivers what other
+ * tabs write. A document is taken over when it is newer than ours or when its demo flag differs
+ * (the other tab swapped the whole document). Before a save, the stored copy is looked at: if
+ * another tab replaced the document (its demo flag changed) since this tab last read or wrote it,
+ * this tab's stale copy is dropped for the stored one rather than written over it.
+ *
+ * Undo reverts the attempts of the last undoable change only. Everything else (notes, settings,
+ * drills, the timer, and any mock that started since) stays as it is now; a mock that the undone
+ * change rated goes back to waiting for its ratings.
+ *
+ * Celebrations are raised for logged and rated attempts in the demo too. They are never stored,
+ * so trying the reward moments on demo data costs nothing.
  */
 import { create } from 'zustand'
 import { TOPICS } from '../data'
@@ -36,7 +49,7 @@ interface StoreState {
   /** Earlier documents, newest last. In memory only. */
   undoStack: AppData[]
   events: AppEvent[]
-  /** Set when the browser would not keep the data (private window, quota). */
+  /** Set when the browser would not keep the data (blocked storage, private window, quota). */
   storageError: string | null
   /** Set when stored data existed but could not be read. */
   loadError: string | null
@@ -45,12 +58,28 @@ interface StoreState {
 const UNDO_DEPTH = 20
 const SAVE_DELAY_MS = 250
 
-let adapter: StorageAdapter = defaultAdapter()
+/** Shown from the first moment when the browser keeps nothing between visits. */
+export const VOLATILE_STORAGE_MESSAGE =
+  'This browser is not keeping data between visits, so progress will be lost when the page closes. Export a backup from Settings to keep it.'
+/** Shown when loading the demo was refused because the user's own data could not be set aside. */
+export const STASH_FAILED_MESSAGE =
+  'Your own data could not be set aside, so the demo was not loaded and nothing was changed. Export a backup from Settings, then try again.'
 
-/** Swap the storage backend (remote sync, tests). Call before `actions.init()`. */
+// Created on first use, never at import: nothing probes the browser's storage until the store needs it.
+let adapter: StorageAdapter | null = null
+const storage = (): StorageAdapter => (adapter ??= defaultAdapter())
+let unsubscribe: (() => void) | null = null
+
+/** Swap the storage backend (remote sync, tests). Call before `actions.init()`, or pass it to init. */
 export function setStorageAdapter(next: StorageAdapter): void {
+  unsubscribe?.()
+  unsubscribe = null
   adapter = next
+  synced = { updatedAt: 0, raw: null }
 }
+
+/** What this tab last read from or wrote to storage: the document's updatedAt and its exact text. */
+let synced: { updatedAt: number; raw: string | null } = { updatedAt: 0, raw: null }
 
 export const useStore = create<StoreState>(() => ({
   status: 'loading',
@@ -65,6 +94,30 @@ export const useStore = create<StoreState>(() => ({
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null
 
+/**
+ * Stale-tab protection. If the stored document is not the one this tab last read or wrote, and
+ * another tab swapped the whole document (the demo flag differs) after that, this tab's copy is
+ * the old one: take the stored document instead of overwriting it. Returns true when it did.
+ */
+async function adoptIfReplaced(mine: AppData): Promise<boolean> {
+  let raw: string | null
+  try {
+    raw = await storage().get(STORAGE_KEYS.data)
+  } catch {
+    return false
+  }
+  if (raw === null || raw === synced.raw) return false
+  try {
+    const parsed = parseAppData(JSON.parse(raw), getToday(), now())
+    if (!parsed.ok || parsed.data.updatedAt <= synced.updatedAt || parsed.data.demo === mine.demo) return false
+    synced = { updatedAt: parsed.data.updatedAt, raw }
+    useStore.setState({ data: parsed.data, undoStack: [] })
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function saveNow(): Promise<void> {
   if (saveTimer) {
     clearTimeout(saveTimer)
@@ -73,8 +126,12 @@ async function saveNow(): Promise<void> {
   const { data, status } = useStore.getState()
   if (status !== 'ready') return
   try {
-    await adapter.set(STORAGE_KEYS.data, JSON.stringify(data))
-    if (useStore.getState().storageError) useStore.setState({ storageError: null })
+    if (await adoptIfReplaced(data)) return
+    const text = JSON.stringify(data)
+    await storage().set(STORAGE_KEYS.data, text)
+    synced = { updatedAt: data.updatedAt, raw: text }
+    // A volatile adapter "succeeds" into memory; its warning stays for the whole visit.
+    if (useStore.getState().storageError && !storage().volatile) useStore.setState({ storageError: null })
   } catch (err) {
     useStore.setState({ storageError: err instanceof Error ? err.message : 'Could not save' })
   }
@@ -83,6 +140,22 @@ async function saveNow(): Promise<void> {
 function scheduleSave(): void {
   if (saveTimer) clearTimeout(saveTimer)
   saveTimer = setTimeout(() => void saveNow(), SAVE_DELAY_MS)
+}
+
+/** Another tab (or device) wrote the document. Take it if it is newer, or if the whole document was swapped. */
+function onExternalChange(value: string | null): void {
+  if (!value || useStore.getState().status !== 'ready') return
+  try {
+    const parsed = parseAppData(JSON.parse(value), getToday(), now())
+    if (!parsed.ok) return
+    const mine = data()
+    if (parsed.data.updatedAt > mine.updatedAt || parsed.data.demo !== mine.demo) {
+      synced = { updatedAt: parsed.data.updatedAt, raw: value }
+      useStore.setState({ data: parsed.data, undoStack: [] })
+    }
+  } catch {
+    // Ignore a half-written value; the next event will carry the whole document.
+  }
 }
 
 // --- events ----------------------------------------------------------------------------------
@@ -129,7 +202,9 @@ function commit(next: AppData, options: CommitOptions = {}): void {
   const state = useStore.getState()
   const prev = state.data
   if (next === prev) return
-  const events = options.celebrate && !next.demo ? eventsBetween(prev, next) : []
+  // The demo celebrates too (nothing about an event is stored), so the reward moments can be seen
+  // on demo data without touching real progress.
+  const events = options.celebrate ? eventsBetween(prev, next) : []
   useStore.setState({
     data: next,
     undoStack: options.undoable === false ? state.undoStack : [...state.undoStack.slice(-(UNDO_DEPTH - 1)), prev],
@@ -146,9 +221,21 @@ function replaceDocument(next: AppData): void {
 }
 
 /**
- * The document with the attempts, and any finished mock, of an earlier snapshot. Everything
- * else (notes, settings, drill results, the timer) stays as it is now, so undoing an attempt
- * never throws away what was done since.
+ * The mocks after undoing: the ones there are now, except that a mock the undone change rated
+ * (it is done now, and was waiting for its ratings in the snapshot) goes back to that state.
+ * A mock that started after the snapshot, or is running, is never touched.
+ */
+function rewindMocks(current: AppData, previous: AppData): AppData['mocks'] {
+  return current.mocks.map((mock) => {
+    const before = previous.mocks.find((m) => m.id === mock.id)
+    return before && before.status !== 'done' && mock.status === 'done' ? before : mock
+  })
+}
+
+/**
+ * The document with the attempts of an earlier snapshot, and any mock rating undone. Everything
+ * else (notes, settings, drill results, the timer, a mock in progress) stays as it is now, so
+ * undoing an attempt never throws away what was done since.
  */
 function rewindAttempts(current: AppData, previous: AppData): AppData {
   const problems: AppData['problems'] = {}
@@ -157,7 +244,7 @@ function rewindAttempts(current: AppData, previous: AppData): AppData {
     const notes = (current.problems[slug] ?? previous.problems[slug]).notes
     if (attempts.length > 0 || !R.isBlankNotes(notes)) problems[slug] = { attempts, notes }
   }
-  return { ...current, problems, mocks: previous.mocks, updatedAt: now() }
+  return { ...current, problems, mocks: rewindMocks(current, previous), updatedAt: now() }
 }
 
 let initInFlight: Promise<void> | null = null
@@ -169,7 +256,7 @@ async function loadDocument(): Promise<void> {
   let storageError: string | null = null
   let raw: string | null = null
   try {
-    raw = await adapter.get(STORAGE_KEYS.data)
+    raw = await storage().get(STORAGE_KEYS.data)
   } catch {
     // A remote adapter can fail; open an empty document rather than hang on the loading screen.
     storageError = 'Could not load your saved data.'
@@ -185,27 +272,38 @@ async function loadDocument(): Promise<void> {
     if (loadError) {
       // Never silently lose a document: park the unreadable copy next to the live one.
       try {
-        await adapter.set(`${STORAGE_KEYS.data}:unreadable`, raw)
+        await storage().set(`${STORAGE_KEYS.data}:unreadable`, raw)
       } catch {
         // Best effort.
       }
     }
   }
+  // When the browser blocks storage the app still runs, from memory; say so from the start.
+  if (storageError === null && storage().volatile) storageError = VOLATILE_STORAGE_MESSAGE
+  const document = loaded ?? R.createEmptyData(today, now())
+  synced = { updatedAt: loaded ? document.updatedAt : 0, raw: loaded ? raw : null }
   useStore.setState({
     status: 'ready',
-    data: loaded ?? R.createEmptyData(today, now()),
+    data: document,
     undoStack: [],
     loadError,
     storageError,
   })
+  // Hear about other tabs, if the adapter can tell us.
+  unsubscribe?.()
+  unsubscribe = storage().subscribe?.(STORAGE_KEYS.data, onExternalChange) ?? null
 }
 
 // --- actions ---------------------------------------------------------------------------------
 
 export const actions = {
-  /** Load the stored document. Call once at startup; a concurrent call shares the same load. */
-  init(): Promise<void> {
+  /**
+   * Load the stored document. Call once at startup; a concurrent call shares the same load.
+   * Pass an adapter to use it instead of the browser's storage (it replaces any earlier one).
+   */
+  init(withAdapter?: StorageAdapter): Promise<void> {
     if (useStore.getState().status === 'ready') return Promise.resolve()
+    if (withAdapter && !initInFlight) setStorageAdapter(withAdapter)
     initInFlight ??= loadDocument().finally(() => {
       initInFlight = null
     })
@@ -293,26 +391,38 @@ export const actions = {
   },
 
   // whole-document operations
-  /** Replace everything with an imported document. */
+  /**
+   * Replace everything with an imported document. Restoring a backup is never a first run, so the
+   * welcome stays closed and the imported plan dates are kept.
+   */
   async importData(imported: AppData): Promise<void> {
-    await adapter.remove(STORAGE_KEYS.stash)
-    replaceDocument({ ...imported, demo: false, updatedAt: now() })
+    await storage().remove(STORAGE_KEYS.stash)
+    replaceDocument({ ...imported, demo: false, onboarded: true, updatedAt: now() })
     await saveNow()
   },
 
   /** Erase everything and start a fresh plan from today. */
   async resetAll(): Promise<void> {
-    await adapter.remove(STORAGE_KEYS.stash)
+    await storage().remove(STORAGE_KEYS.stash)
     const fresh = R.createEmptyData(getToday(), now())
     replaceDocument({ ...fresh, onboarded: true })
     await saveNow()
   },
 
-  /** Load the generated demo history. The user's own document is parked and comes back on clearDemo. */
+  /**
+   * Load the generated demo history. The user's own document is parked first and comes back on
+   * clearDemo. If it cannot be parked the demo is not loaded at all: the document stays as it is
+   * and storageError says why, so a failed write can never cost the user their progress.
+   */
   async loadDemo(): Promise<void> {
     const current = data()
     if (!current.demo) {
-      await adapter.set(STORAGE_KEYS.stash, JSON.stringify(current)).catch(() => undefined)
+      try {
+        await storage().set(STORAGE_KEYS.stash, JSON.stringify(current))
+      } catch {
+        useStore.setState({ storageError: STASH_FAILED_MESSAGE })
+        return
+      }
     }
     const { generateDemoData } = await import('../domain/demo')
     replaceDocument(generateDemoData(getToday(), now()))
@@ -323,7 +433,7 @@ export const actions = {
   async clearDemo(): Promise<void> {
     const today = getToday()
     let restored: AppData | null = null
-    const raw = await adapter.get(STORAGE_KEYS.stash)
+    const raw = await storage().get(STORAGE_KEYS.stash)
     if (raw) {
       try {
         const parsed = parseAppData(JSON.parse(raw), today, now())
@@ -332,8 +442,11 @@ export const actions = {
         restored = null
       }
     }
-    await adapter.remove(STORAGE_KEYS.stash)
-    replaceDocument(restored ?? { ...R.createEmptyData(today, now()), onboarded: true })
+    await storage().remove(STORAGE_KEYS.stash)
+    // The restored document is older than the demo it replaces. Stamping it now makes it the
+    // newest, so other tabs that still show the demo take it instead of ignoring it.
+    const next = restored ? { ...restored, demo: false, updatedAt: now() } : { ...R.createEmptyData(today, now()), onboarded: true }
+    replaceDocument(next)
     await saveNow()
   },
 
@@ -345,23 +458,11 @@ export const actions = {
 
 export type Actions = typeof actions
 
-// Save before the tab goes away, and pick up changes made in another tab.
+// Save before the tab goes away. (Hearing about other tabs is the adapter's job: see `subscribe`.)
 if (typeof window !== 'undefined') {
   window.addEventListener('pagehide', () => actions.flush())
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') actions.flush()
-  })
-  window.addEventListener('storage', (event) => {
-    if (event.key !== STORAGE_KEYS.data || !event.newValue) return
-    if (useStore.getState().status !== 'ready') return
-    try {
-      const parsed = parseAppData(JSON.parse(event.newValue), getToday(), now())
-      if (parsed.ok && parsed.data.updatedAt > data().updatedAt) {
-        useStore.setState({ data: parsed.data, undoStack: [] })
-      }
-    } catch {
-      // Ignore a half-written value; the next event will carry the whole document.
-    }
   })
 }
 

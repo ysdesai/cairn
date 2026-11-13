@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { VOLATILE_STORAGE_MESSAGE, useStore } from '../../state/store'
 import { PageHeader, listContainer } from '../../ui'
 import { AboutSection } from './AboutSection'
 import { AppearanceSection } from './AppearanceSection'
@@ -10,13 +11,14 @@ import { TargetsSection } from './TargetsSection'
 import s from './Settings.module.css'
 
 export default function SettingsScreen() {
+  const volatile = useStore((state) => state.storageError === VOLATILE_STORAGE_MESSAGE)
   return (
     <div className="page">
       <PageHeader
         sheet="07"
         name="Settings"
         terrain={7}
-        meta="Stored in this browser"
+        meta={volatile ? 'Not being kept' : 'Stored in this browser'}
         title={
           <>
             Set the <em>pace</em>. Keep a <em>copy</em>.

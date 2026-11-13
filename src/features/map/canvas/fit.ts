@@ -38,6 +38,8 @@ export interface Obstacles {
   camps: { id: TopicId; box: Box }[]
   /** Points along every trail. */
   points: Pt[]
+  /** The sheet's own furniture that is worth seeing: the scale bar and the north arrow. */
+  marks: Box[]
 }
 
 const cache = new Map<string, Obstacles>()
@@ -57,9 +59,20 @@ export function obstaclesOf(layout: Layout): Obstacles {
       if (i % 3 === 0 || i === route.line.length - 1) points.push(p)
     })
   }
-  const out = { camps, points }
+  const out = { camps, points, marks: marksOf(layout) }
   cache.set(layout.id, out)
   return out
+}
+
+/** The scale bar and the north arrow, as boxes in sheet units. */
+export function marksOf(layout: Layout): Box[] {
+  const [sx, sy] = layout.scale
+  const [nx, ny] = layout.north
+  const note = layout.margin >= 40 ? 8 : 30
+  return [
+    { x0: sx - 6, x1: sx + layout.scaleKm * 100 + 30, y0: sy - 18, y1: sy + note },
+    { x0: nx - 12, x1: nx + 12, y0: ny - 52, y1: ny + 4 },
+  ]
 }
 
 /** The flag over the camp the user is at, in sheet units. */
@@ -74,6 +87,8 @@ const PAD = 10
 const CLEAR = 6
 /** The smallest the map may be made to make room, as a share of the plain fit. */
 const FLOOR = 0.7
+/** The most of the map that keeping the scale bar and north arrow clear is worth. */
+const MARKS_FLOOR = 0.94
 
 const overlaps = (a: Box, b: Box) => a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0
 
@@ -95,8 +110,11 @@ const SPOTS: readonly (readonly [number, number])[] = (() => {
   return all.sort((a, b) => (a[0] - 0.5) ** 2 + (a[1] - 0.5) ** 2 - ((b[0] - 0.5) ** 2 + (b[1] - 0.5) ** 2))
 })()
 
-/** How many camps, names and trail points a framing leaves under the furniture. */
-export function covered(layout: Layout, cam: Cam, reserved: readonly Rect[], here: TopicId | null): number {
+/**
+ * How many camps, names and trail points a framing leaves under the furniture. With `marks`, the
+ * scale bar and the north arrow count too: worth keeping clear, but not worth a much smaller map.
+ */
+export function covered(layout: Layout, cam: Cam, reserved: readonly Rect[], here: TopicId | null, marks = true): number {
   if (reserved.length === 0) return 0
   const obs = obstaclesOf(layout)
   const pad = CLEAR / cam.k
@@ -104,35 +122,43 @@ export function covered(layout: Layout, cam: Cam, reserved: readonly Rect[], her
   for (const r of reserved) {
     const box: Box = { x0: (r.x0 - cam.x) / cam.k - pad, x1: (r.x1 - cam.x) / cam.k + pad, y0: (r.y0 - cam.y) / cam.k - pad, y1: (r.y1 - cam.y) / cam.k + pad }
     for (const camp of obs.camps) if (overlaps(camp.box, box)) count++
+    if (marks) for (const mark of obs.marks) if (overlaps(mark, box)) count++
     if (here && overlaps(beaconOf(layout, here), box)) count++
     for (const [x, y] of obs.points) if (x > box.x0 && x < box.x1 && y > box.y0 && y < box.y1) count++
   }
   return count
 }
 
-/**
- * Frame the whole sheet in `area`, as large as it can be while no `reserved` rectangle covers
- * a camp, its name, or a trail. Falls back to the least covered framing if nothing is clean.
- */
-export function fitSheet(layout: Layout, area: Area, reserved: readonly Rect[], here: TopicId | null = null): Cam {
-  const base = plainFit(layout, area)
-  if (reserved.length === 0 || covered(layout, base, reserved, here) === 0) return base
-
+/** The largest framing, searching from the plain fit downward to `floor` of it, with nothing under the furniture. */
+function search(layout: Layout, area: Area, reserved: readonly Rect[], here: TopicId | null, base: Cam, floor: number, marks: boolean) {
   const m = layout.margin
   const sw = layout.width + m * 2
   const sh = layout.height + m * 2
   const aw = Math.max(1, area.right - area.left) - PAD * 2
   const ah = Math.max(1, area.bottom - area.top) - PAD * 2
   let best: { cam: Cam; count: number } = { cam: base, count: Infinity }
-  for (let k = base.k; k >= base.k * FLOOR; k *= 0.99) {
+  for (let k = base.k; k >= base.k * floor; k *= 0.99) {
     const slackX = Math.max(0, aw - sw * k)
     const slackY = Math.max(0, ah - sh * k)
     for (const [fx, fy] of SPOTS) {
       const cam: Cam = { k, x: area.left + PAD + slackX * fx + m * k, y: area.top + PAD + slackY * fy + m * k }
-      const count = covered(layout, cam, reserved, here)
-      if (count === 0) return cam
+      const count = covered(layout, cam, reserved, here, marks)
+      if (count === 0) return { cam, count }
       if (count < best.count) best = { cam, count }
     }
   }
-  return best.cam
+  return best
+}
+
+/**
+ * Frame the whole sheet in `area`, as large as it can be while no `reserved` rectangle covers
+ * a camp, its name, or a trail. The scale bar and north arrow are kept clear too unless that
+ * would cost more than a few percent of the map. Falls back to the least covered framing.
+ */
+export function fitSheet(layout: Layout, area: Area, reserved: readonly Rect[], here: TopicId | null = null): Cam {
+  const base = plainFit(layout, area)
+  if (reserved.length === 0 || covered(layout, base, reserved, here) === 0) return base
+  const tidy = search(layout, area, reserved, here, base, MARKS_FLOOR, true)
+  if (tidy.count === 0) return tidy.cam
+  return search(layout, area, reserved, here, base, FLOOR, false).cam
 }
