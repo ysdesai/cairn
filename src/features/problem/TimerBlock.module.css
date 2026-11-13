@@ -1,0 +1,129 @@
+.timer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-6);
+}
+
+.readout {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  min-width: 0;
+}
+
+.clock {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-3xl);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--ink);
+  transition: color var(--dur-3) var(--ease-out);
+}
+
+.over .clock {
+  color: var(--gold-ink);
+}
+
+.overBy {
+  color: var(--gold-ink);
+  font-size: var(--text-sm);
+}
+
+.live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.pulse {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ember);
+}
+
+.pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ember);
+  animation: cairn-pulse-ring 1.6s var(--ease-out) infinite;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+/* A scale bar toward the target: a tick for every few minutes, the target as the tall one at the end. */
+.scale {
+  position: relative;
+  height: 14px;
+}
+
+.ticks {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, var(--line-3) 1px, transparent 1px);
+  background-size: calc(100% / var(--n)) 7px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+.baseline {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: var(--line-2);
+}
+
+.goal {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  height: 14px;
+  background: var(--ink-3);
+}
+
+.fill {
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ember);
+  transform: scaleX(var(--v));
+  transform-origin: left center;
+  transition:
+    transform 1s linear,
+    background-color var(--dur-3) var(--ease-out);
+}
+
+.over .fill {
+  background: var(--gold);
+}
+
+.note {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 520px) {
+  .clock {
+    font-size: var(--text-2xl);
+  }
+}

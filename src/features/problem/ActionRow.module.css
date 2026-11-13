@@ -1,0 +1,36 @@
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-5);
+  margin-top: var(--s-6);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+@media (max-width: 720px) {
+  .row {
+    margin-top: var(--s-5);
+  }
+
+  /* The footer carries the lead action on a phone. */
+  .lead {
+    display: none;
+  }
+
+  .links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  /* An odd one out takes the whole row instead of leaving a gap. */
+  .links > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}

@@ -1,0 +1,46 @@
+.ring {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+
+.ring svg {
+  position: absolute;
+  inset: 0;
+}
+
+.track {
+  fill: none;
+  stroke: var(--line-2);
+}
+
+.value {
+  fill: none;
+  stroke: var(--c);
+  stroke-linecap: round;
+  transition: stroke-dashoffset var(--dur-4) var(--ease-out);
+}
+
+.ember {
+  --c: var(--ember);
+}
+.moss {
+  --c: var(--moss);
+}
+.ink {
+  --c: var(--ink-2);
+}
+.lake {
+  --c: var(--lake);
+}
+.glow {
+  --c: var(--glow-2);
+}
+
+.center {
+  position: relative;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}

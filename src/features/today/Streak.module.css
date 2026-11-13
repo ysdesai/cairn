@@ -1,0 +1,47 @@
+.strip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: var(--r-sm);
+}
+
+.strip:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.plot {
+  position: relative;
+}
+
+.link {
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+}
+
+.on {
+  fill: var(--ink-2);
+}
+
+.onToday {
+  fill: var(--ember);
+}
+
+.now {
+  fill: var(--paper);
+  stroke: var(--ember);
+  stroke-width: 1.5;
+}
+
+.off {
+  fill: var(--line-3);
+}
+
+.day {
+  cursor: default;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+}

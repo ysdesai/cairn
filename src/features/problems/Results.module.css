@@ -1,0 +1,250 @@
+/* With the camp index: a narrow margin for the trail, then the rows. */
+.layout {
+  display: block;
+}
+
+@media (min-width: 1100px) {
+  .layout[data-rail] {
+    display: grid;
+    grid-template-columns: 204px minmax(0, 1fr);
+    column-gap: var(--s-10);
+    align-items: start;
+  }
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* A camp lands below the top bar and the pinned toolbar when the index jumps to it. */
+.group {
+  scroll-margin-top: calc(var(--topbar-h) + 124px);
+}
+
+.group + .group {
+  margin-top: var(--s-10);
+}
+
+/* ---- Camp header: a ruled line with the camp's name and how far along it is ---- */
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4) var(--s-6);
+  padding: var(--s-3) 14px var(--s-3) 14px;
+  margin-bottom: var(--s-1);
+  border-bottom: 1px solid var(--line-3);
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+
+.head:hover {
+  background: var(--line);
+}
+
+.head:focus-visible {
+  outline-offset: -2px;
+}
+
+.headName {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  min-width: 0;
+}
+
+.camp {
+  flex: none;
+}
+
+.topicName {
+  font-size: var(--text-xl);
+  line-height: 1.15;
+  color: var(--ink);
+}
+
+.shown {
+  color: var(--ember-ink);
+}
+
+.headStat {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: 12px;
+  align-self: center;
+}
+
+.count {
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+.meter {
+  width: 120px;
+}
+
+.arrow {
+  width: 15px;
+  height: 15px;
+  color: var(--ink-3);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.head:hover .arrow,
+.head:focus-visible .arrow {
+  transform: translateX(3px);
+  color: var(--ink);
+}
+
+.flatHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--s-3) 14px;
+  margin-bottom: var(--s-1);
+  border-bottom: 1px solid var(--line-3);
+}
+
+/* ---- Rows ---- */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  position: relative;
+}
+
+/* A hairline between rows, across the same width the hover and the keyboard cursor fill. */
+.item + .item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--line);
+  pointer-events: none;
+}
+
+/* ---- Inside a row ---- */
+
+/* The search snippet: a line of notes or a tag, inside the row so hover and the cursor cover it. */
+.snippet {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-top: 1px;
+}
+
+.snippetLabel {
+  flex: none;
+  min-width: 56px;
+}
+
+.snippetText {
+  min-width: 0;
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+}
+
+/* The last result and when it was: a mono column that uses the row's width. */
+.last {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 168px;
+}
+
+/* A fixed slot for the status, so the column before it lines up whether or not a chip is there. */
+.status {
+  display: inline-flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 641px) {
+  .status {
+    min-width: 112px;
+  }
+}
+
+.lastText {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.dot[data-rating='easy'] {
+  background: var(--rate-easy);
+}
+
+.dot[data-rating='struggled'] {
+  background: var(--rate-struggled);
+}
+
+.dot[data-rating='help'] {
+  background: var(--rate-help);
+}
+
+.when {
+  display: block;
+  color: var(--ink-3);
+}
+
+
+
+@media (max-width: 759.98px) {
+  .head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-2);
+    padding-inline: 10px;
+  }
+
+  .headStat {
+    align-self: stretch;
+  }
+
+  .meter {
+    flex: 1 1 auto;
+    width: auto;
+  }
+
+  .count {
+    min-width: 7ch;
+  }
+
+  .topicName {
+    font-size: var(--text-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .last {
+    display: none;
+  }
+
+  /* With the topic in the line as well, a phone has room for the date instead of the pattern. */
+  .flat .pattern {
+    display: none;
+  }
+
+  .snippet {
+    flex-direction: column;
+    gap: 3px;
+  }
+}

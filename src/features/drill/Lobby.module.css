@@ -1,0 +1,174 @@
+/* The run console: two controls and the start button on one ruled strip. */
+.setup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--s-5) var(--s-10);
+  padding: var(--s-6) 0;
+  border-block: 1px solid var(--line-2);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.start {
+  margin-left: auto;
+}
+
+.note {
+  flex: 1 0 100%;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.note .num {
+  color: var(--ink-2);
+}
+
+.locked {
+  display: inline;
+}
+
+/* ---- Standing ---- */
+
+.standing {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: var(--s-16);
+  margin-top: var(--s-12);
+  align-items: start;
+}
+
+.figures {
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--s-6));
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+}
+
+.accuracy {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  font-size: var(--text-sm);
+}
+
+.ringValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.ringValue :global(.stat) {
+  font-size: 1.625rem;
+}
+
+.ringValue :global(.num) {
+  font-size: var(--text-2xs);
+}
+
+.big :global(.stat) {
+  font-size: var(--text-4xl);
+}
+
+.coverage {
+  font-size: var(--text-md);
+}
+
+/* ---- First visit ---- */
+
+.first {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  margin-top: var(--s-12);
+}
+
+.gazetteer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding-top: 12px;
+  border-top: 1px solid var(--line-2);
+}
+
+.names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 0;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+.names li:not(:last-child)::after {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  margin: 0 12px 3px;
+  border-radius: 50%;
+  background: var(--line-3);
+}
+
+@media (max-width: 1000px) {
+  .standing {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-10);
+    margin-top: var(--s-10);
+  }
+
+  .figures {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--s-5) var(--s-6);
+  }
+
+  .big :global(.stat) {
+    font-size: var(--text-3xl);
+  }
+}
+
+@media (max-width: 640px) {
+  .setup {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--s-5);
+  }
+
+  .group > :global(div) {
+    width: 100%;
+  }
+
+  .group > :global(div) > button {
+    flex: 1 1 0;
+    padding-inline: 6px;
+  }
+
+  .start {
+    margin-left: 0;
+  }
+
+  .start > button {
+    width: 100%;
+  }
+
+  .accuracy {
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-3);
+  }
+}

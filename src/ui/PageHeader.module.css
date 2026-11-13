@@ -1,0 +1,142 @@
+.header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+  padding-bottom: var(--s-8);
+}
+
+.backdrop {
+  position: absolute;
+  inset: -80px calc(var(--gutter) * -1) -40px;
+  z-index: -1;
+  pointer-events: none;
+  overflow: clip;
+}
+
+/* First light on the ridge: a faint warm wash from the upper right. */
+.backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 0 30%;
+  background: radial-gradient(62% 70% at 70% 20%, var(--sky-glow), transparent 72%);
+}
+
+.margin {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.margin > :first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+.sheetNo {
+  color: var(--ink-3);
+}
+
+.sep {
+  width: 14px;
+  height: 1px;
+  background: var(--line-3);
+}
+
+.name {
+  color: var(--ink);
+}
+
+/* A ruled scale bar, as in a map margin: a baseline with a tick every 8px, a taller one every 40. */
+.scale {
+  flex: 1 1 auto;
+  min-width: 24px;
+  height: 7px;
+  background-image:
+    repeating-linear-gradient(to right, var(--line-3) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to right, var(--line-2) 0 1px, transparent 1px 8px),
+    linear-gradient(var(--line-2) 0 0);
+  background-size:
+    100% 7px,
+    100% 3px,
+    100% 1px;
+  background-position:
+    left bottom,
+    left bottom,
+    left bottom;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+}
+
+.meta {
+  flex: none;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-8);
+  flex-wrap: wrap;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+  max-width: 880px;
+}
+
+.title {
+  max-width: 24ch;
+}
+
+.lede {
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+  .header {
+    gap: var(--s-5);
+    padding-bottom: var(--s-6);
+  }
+
+  /* On a phone the margin note matters more than the sheet number or the ruler. */
+  .sheetNo,
+  .sep {
+    display: none;
+  }
+
+  .scale {
+    min-width: 0;
+  }
+
+  /* The note shortens (with an ellipsis) before it can push the margin line past the screen. */
+  .meta {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 72%;
+  }
+
+  .lede {
+    font-size: 0.9375rem;
+  }
+}

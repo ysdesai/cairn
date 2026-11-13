@@ -1,0 +1,38 @@
+.tip {
+  position: absolute;
+  z-index: var(--z-raised);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  max-width: 240px;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  box-shadow: var(--shadow-2);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  animation: chart-tip-in 120ms var(--ease-out);
+}
+
+.below {
+  transform: translate(-50%, 10px);
+}
+
+.tip :global(.num) {
+  font-size: var(--text-2xs);
+  opacity: 0.8;
+}
+
+.tip strong {
+  font-weight: 600;
+}
+
+@keyframes chart-tip-in {
+  from {
+    opacity: 0;
+  }
+}

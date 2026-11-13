@@ -1,0 +1,69 @@
+.screen {
+  position: fixed;
+  inset: 0;
+  /* Under the top bar and the dock (both z 40), above the page. */
+  z-index: 1;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* A faint veil so the wordmark and top-bar controls stay legible over the drawing. */
+.veil {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--topbar-h) + 28px);
+  background: linear-gradient(to bottom, var(--paper), transparent);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Marginalia sit in the gutters and never over the middle of the map. */
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.titleSlot {
+  position: absolute;
+  top: calc(var(--topbar-h) + 12px);
+  left: 16px;
+}
+
+.legendSlot {
+  position: absolute;
+  left: 16px;
+  bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
+}
+
+.cameraSlot {
+  position: absolute;
+  right: 16px;
+  bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
+}
+
+@media (max-width: 760px) {
+  .titleSlot {
+    left: 12px;
+  }
+
+  .legendSlot {
+    left: 12px;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+
+  .cameraSlot {
+    right: 12px;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 12px);
+  }
+}

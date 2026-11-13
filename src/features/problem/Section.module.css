@@ -1,0 +1,44 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  margin-top: var(--s-10);
+  scroll-margin-top: var(--s-4);
+}
+
+.section:focus {
+  outline: none;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.head h2 {
+  flex: none;
+  color: var(--ink);
+}
+
+.rule {
+  flex: 1 1 auto;
+  height: 1px;
+  min-width: var(--s-4);
+  background: var(--line-2);
+}
+
+.aside {
+  flex: none;
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .section {
+    margin-top: var(--s-8);
+  }
+}

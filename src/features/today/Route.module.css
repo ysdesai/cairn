@@ -1,0 +1,433 @@
+.trail {
+  --rail: 34px;
+  position: relative;
+}
+
+.node {
+  --mk: 30px;
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+}
+
+.headNode {
+  --mk: 10px;
+  padding-bottom: 8px;
+}
+
+.endNode {
+  --mk: 10px;
+}
+
+/* A new group starts a little lower, so the marker sits level with its label. */
+.gap {
+  --mk: 30px;
+  padding-top: 20px;
+}
+
+.body {
+  min-width: 0;
+}
+
+/* ---- The line: one half above the marker, one below, each in the state of the stop it leads to. */
+
+.rail {
+  position: relative;
+}
+
+.rail::before,
+.rail::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  width: 1px;
+  margin-left: -0.5px;
+}
+
+.rail::before {
+  top: 0;
+  height: var(--mk);
+}
+
+.rail::after {
+  top: var(--mk);
+  bottom: 0;
+}
+
+.node[data-above='none'] .rail::before,
+.node[data-below='none'] .rail::after {
+  display: none;
+}
+
+.node[data-above='done'] .rail::before,
+.node[data-below='done'] .rail::after {
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ember);
+}
+
+.node[data-above='next'] .rail::before,
+.node[data-below='next'] .rail::after {
+  background: repeating-linear-gradient(to bottom, var(--ember) 0 4px, transparent 4px 8px);
+}
+
+.node[data-above='pending'] .rail::before,
+.node[data-below='pending'] .rail::after {
+  background: repeating-linear-gradient(to bottom, var(--line-3) 0 3px, transparent 3px 7px);
+}
+
+/* ---- Markers */
+
+.mark,
+.cross,
+.flag {
+  position: absolute;
+  left: 16px;
+  top: var(--mk);
+  transform: translate(-50%, -50%);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--paper);
+}
+
+.pending {
+  width: 11px;
+  height: 11px;
+  box-shadow: inset 0 0 0 1.5px var(--ink-4);
+}
+
+.next {
+  width: 17px;
+  height: 17px;
+  box-shadow: inset 0 0 0 2px var(--ember);
+}
+
+.next::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ember);
+}
+
+.next::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1.5px var(--ember);
+  animation: cairn-pulse-ring 2.4s var(--ease-out) infinite;
+}
+
+.done {
+  width: 17px;
+  height: 17px;
+  background: var(--ember);
+  color: var(--on-ember);
+}
+
+.done :global(svg) {
+  width: 10px;
+  height: 10px;
+  stroke-width: 3;
+}
+
+/* A graticule cross where a group begins. */
+.cross {
+  width: 11px;
+  height: 1px;
+  background: var(--ink-3);
+}
+
+.flag {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line-3);
+  color: var(--ink-3);
+}
+
+.summit {
+  background: var(--alpenglow);
+  box-shadow: none;
+  color: var(--on-ember);
+}
+
+/* ---- Rows */
+
+.item {
+  border-radius: var(--r-lg);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.isNext {
+  background: var(--ember-wash);
+}
+
+.trailing {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.doneMark {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.doneMark :global(svg) {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2.5;
+}
+
+/* The drill row speaks the same language as ProblemRow: glyph, title, one line of facts, trailing. */
+.drill {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 60px;
+  padding: 10px 10px 10px 14px;
+  border-radius: var(--r-lg);
+  text-align: left;
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    opacity var(--dur-2) var(--ease-out);
+}
+
+.drill::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--ember);
+  transform: scaleY(0);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.drill:hover,
+.drillActive {
+  background: var(--line);
+}
+
+.drillActive::before {
+  transform: scaleY(1);
+}
+
+.drill:focus-visible {
+  outline-offset: -2px;
+}
+
+.drillDone {
+  opacity: 0.5;
+}
+
+.drillDone .drillTitle {
+  text-decoration: line-through;
+  text-decoration-color: var(--line-3);
+}
+
+.drillGlyph {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  flex: none;
+  color: var(--ink-2);
+}
+
+.drillGlyph :global(svg) {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.6;
+}
+
+.drillText {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.drillTitle {
+  color: var(--ink);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.006em;
+}
+
+.drillMeta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  line-height: 1;
+}
+
+.drillTrail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+
+.chevron {
+  width: 15px;
+  height: 15px;
+  color: var(--ink-4);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity var(--dur-1) var(--ease-out),
+    transform var(--dur-2) var(--ease-out);
+}
+
+.drill:hover .chevron,
+.drillActive .chevron,
+.drill:focus-visible .chevron {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- The end of the trail */
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 10px;
+}
+
+.planTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 20px;
+}
+
+.stops {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 4px;
+}
+
+.stop {
+  flex-basis: 0;
+  min-width: 4px;
+  height: 2px;
+  background: var(--ink-3);
+}
+
+.stopDone {
+  height: 4px;
+  background: var(--ember);
+}
+
+.room {
+  flex-basis: 0;
+  height: 0;
+  border-top: 1px dashed var(--line-3);
+}
+
+.limit {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: var(--ink-2);
+}
+
+.pull {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  flex-wrap: wrap;
+  padding: 14px 10px 0 0;
+  font-size: var(--text-sm);
+}
+
+.pull p {
+  max-width: 44ch;
+}
+
+.finish {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-right: 10px;
+}
+
+.finish p {
+  max-width: 46ch;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+  .trail {
+    --rail: 28px;
+  }
+
+  .rail::before,
+  .rail::after,
+  .mark,
+  .cross,
+  .flag {
+    left: 12px;
+  }
+
+  .nextChip,
+  .doneText {
+    display: none;
+  }
+
+  .drill {
+    gap: 12px;
+    padding-left: 10px;
+    padding-right: 6px;
+  }
+
+  .chevron {
+    display: none;
+  }
+
+  .pullButton.pullButton {
+    height: 40px;
+    padding: 0 14px;
+  }
+
+  .plan,
+  .finish {
+    padding-right: 4px;
+  }
+
+  .pull {
+    padding-right: 4px;
+  }
+}

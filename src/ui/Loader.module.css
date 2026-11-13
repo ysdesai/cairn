@@ -1,0 +1,33 @@
+.loader {
+  display: grid;
+  place-items: center;
+  min-height: 40vh;
+  padding: 48px;
+}
+
+.loader ellipse {
+  fill: var(--ink-4);
+  animation: settle 1.4s var(--ease-in-out) infinite;
+}
+
+.b {
+  animation-delay: 0.16s !important;
+}
+
+.c {
+  fill: var(--ember) !important;
+  animation-delay: 0.32s !important;
+}
+
+@keyframes settle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(-2px);
+  }
+  45%,
+  70% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,106 @@
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  min-width: 0;
+}
+
+/* One hairline pill: minus, number, plus, sharing a single outline. */
+.button,
+.input {
+  height: 36px;
+  background: var(--paper-raised);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  flex: none;
+  color: var(--ink-2);
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+}
+
+.button:first-child {
+  border-radius: var(--r-md) 0 0 var(--r-md);
+}
+
+.button:nth-child(3) {
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+
+.button :global(svg) {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.75;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--paper-sunken);
+  color: var(--ink);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.button:disabled {
+  color: var(--ink-4);
+}
+
+.button:focus-visible,
+.input:focus-visible {
+  position: relative;
+  z-index: 1;
+}
+
+.input {
+  width: 56px;
+  min-width: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: 500;
+  text-align: center;
+}
+
+.input:hover:not(:focus) {
+  box-shadow: inset 0 0 0 1px var(--line-3);
+}
+
+.input:focus {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1.5px var(--focus),
+    0 0 0 3px var(--ember-wash-2);
+  position: relative;
+  z-index: 1;
+}
+
+.unit {
+  margin-left: 10px;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+@media (pointer: coarse) {
+  .button,
+  .input {
+    height: 42px;
+  }
+
+  .button {
+    width: 42px;
+  }
+
+  .input {
+    font-size: 16px;
+  }
+}

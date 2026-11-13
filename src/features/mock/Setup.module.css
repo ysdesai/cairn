@@ -1,0 +1,270 @@
+.nowrap {
+  white-space: nowrap;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: var(--s-6);
+  padding: var(--s-4) var(--s-8);
+  border-top: 1px solid var(--line);
+}
+
+.row:first-child {
+  border-top: 0;
+  padding-top: var(--s-6);
+}
+
+.rowHead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.shortcuts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.topicLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--s-4);
+  row-gap: var(--s-1);
+  min-height: 34px;
+}
+
+.topicSummary {
+  color: var(--ink);
+  font-size: var(--text-base);
+  font-weight: 500;
+}
+
+.topicLine svg {
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.topicLine svg.open {
+  transform: rotate(180deg);
+}
+
+.chooser {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding-top: var(--s-1);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Selected is an ink underline on a hairline outline, not a fill: all eighteen on at once
+   reads as a default state, and the underline is a second signal besides color. */
+.chip {
+  position: relative;
+  color: var(--ink-3);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+.chip[aria-pressed='true'] {
+  color: var(--ink);
+  background: transparent;
+  box-shadow:
+    inset 0 0 0 1px var(--line-3),
+    inset 0 -2px 0 0 var(--ink);
+}
+
+.count {
+  color: var(--ink-2);
+  font-size: 11px;
+  opacity: 1;
+}
+
+.foot {
+  position: sticky;
+  /* Rests on the dock's top edge so the one primary action is always in view and nothing
+     scrolls through the gap between them. */
+  bottom: calc(var(--dock-h) + var(--dock-gap) + env(safe-area-inset-bottom, 0px));
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'pool action'
+    'meter action'
+    'note action';
+  align-items: center;
+  column-gap: var(--s-8);
+  row-gap: 8px;
+  padding: var(--s-4) var(--s-8);
+  border-top: 1px solid var(--line-2);
+  background: var(--paper);
+}
+
+.poolLine {
+  grid-area: pool;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.poolLine :global(.stat) {
+  font-size: var(--text-2xl);
+}
+
+.poolText {
+  color: var(--ink-2);
+  font-size: var(--text-base);
+}
+
+.meter {
+  grid-area: meter;
+  width: min(100%, 320px);
+}
+
+.note {
+  grid-area: note;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  max-width: 52ch;
+}
+
+.note[data-kind='mix']::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  vertical-align: 0.1em;
+}
+
+.action {
+  grid-area: action;
+}
+
+/* The widest control (four difficulty options, 474px) needs the room a 200px label leaves it
+   only above about 900px; below that the options sit two by two and every control fits. */
+@media (max-width: 900px) {
+  .rowBody .mix {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+    width: 100%;
+    max-width: 380px;
+  }
+
+  .rowBody .mix > button {
+    height: 36px;
+  }
+
+  .rowBody .fit {
+    display: flex;
+    width: 100%;
+    max-width: 440px;
+  }
+
+  .rowBody .fit > button {
+    flex: 1 1 0;
+    padding: 0 6px;
+  }
+}
+
+@media (max-width: 900px) and (pointer: coarse) {
+  .rowBody .mix > button {
+    height: 40px;
+  }
+}
+
+@media (max-width: 760px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-3);
+    padding: var(--s-4);
+  }
+
+  .row:first-child {
+    padding-top: var(--s-5);
+  }
+
+  .rowHead {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding-top: 0;
+  }
+
+  .rowBody {
+    align-items: stretch;
+  }
+
+  .rowBody .mix,
+  .rowBody .fit {
+    max-width: none;
+  }
+
+  .foot {
+    grid-template-areas:
+      'pool action'
+      'note note';
+    column-gap: var(--s-4);
+    row-gap: var(--s-2);
+    padding: var(--s-3) var(--s-4);
+  }
+
+  .meter {
+    display: none;
+  }
+
+  .poolLine {
+    gap: 8px;
+  }
+
+  .poolLine :global(.stat) {
+    font-size: var(--text-xl);
+  }
+
+  .poolText {
+    font-size: var(--text-sm);
+    white-space: nowrap;
+  }
+
+  .note:empty {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .chips > button {
+    min-height: 40px;
+  }
+}

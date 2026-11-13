@@ -1,0 +1,378 @@
+.panel {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--topbar-h) + 12px);
+  right: 12px;
+  bottom: calc(var(--dock-h) + var(--dock-gap) + 12px);
+  display: flex;
+  flex-direction: column;
+  width: clamp(380px, 36vw, 460px);
+  border-radius: var(--r-xl);
+  background: var(--paper-raised);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    var(--edge-light),
+    var(--shadow-3);
+  overflow: hidden;
+}
+
+.margin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  min-height: 52px;
+  padding: 8px 8px 8px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.marginLine {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-md);
+  color: var(--ink-3);
+  transition:
+    color var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out);
+}
+
+.close:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.close :global(svg) {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.intro {
+  padding: 22px 24px 4px;
+}
+
+.name {
+  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.375rem);
+  text-wrap: balance;
+}
+
+.tagline {
+  margin-top: 8px;
+  max-width: 44ch;
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+/* ---- Facts ---- */
+
+.facts {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin-top: 20px;
+  border-block: 1px solid var(--line);
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 20px 12px 0;
+}
+
+.fact + .fact {
+  padding-left: 20px;
+  border-left: 1px solid var(--line);
+}
+
+.factStrength {
+  align-items: stretch;
+}
+
+.ringText {
+  font-size: var(--text-xs);
+  color: var(--ink);
+}
+
+.strength {
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.uncharted {
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.counts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.counts .num {
+  color: var(--ink);
+  font-size: var(--text-md);
+  margin-right: 2px;
+}
+
+.fact:last-of-type {
+  padding-right: 0;
+}
+
+.weakness {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 10px 0 12px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-sm);
+  color: var(--ink-2);
+}
+
+/* ---- Neighbours ---- */
+
+.links {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+
+.neighbours {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0 16px;
+  min-width: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.neighbours > :global(.eyebrow) {
+  flex: none;
+  width: 104px;
+  padding-top: 12px;
+}
+
+.linkList {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  min-width: 0;
+}
+
+.linkBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  font-size: var(--text-md);
+  text-decoration: underline;
+  text-decoration-color: var(--line-3);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--dur-1) var(--ease-out);
+}
+
+.linkBtn:hover {
+  text-decoration-color: var(--ember);
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  font-size: var(--text-md);
+}
+
+/* ---- Sections ---- */
+
+.tabsBar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin-top: 8px;
+  padding: 12px 24px;
+  background: var(--paper-raised);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.content {
+  padding: 12px 24px 28px;
+}
+
+/* The trail: a hairline joining each problem's mark to the next. */
+.trail {
+  display: flex;
+  flex-direction: column;
+  margin-inline: -10px;
+}
+
+.step {
+  position: relative;
+}
+
+/* Keep the keyboard cursor's row clear of the sticky tab bar and the footer. */
+.trail [data-slug] {
+  scroll-margin-block: 72px 12px;
+}
+
+.step::after {
+  content: '';
+  position: absolute;
+  left: 25px;
+  top: calc(50% + 15px);
+  height: calc(100% - 30px);
+  width: 0;
+  pointer-events: none;
+}
+
+.seg-walked::after {
+  left: 25px;
+  border-left: 2px solid var(--ember);
+}
+
+.seg-open::after {
+  border-left: 1.5px solid var(--line-3);
+}
+
+.seg-ahead::after {
+  border-left: 1.5px dotted var(--line-3);
+}
+
+/* ---- Footer ---- */
+
+.footer {
+  flex: none;
+  padding: 14px 24px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-raised);
+}
+
+.footLabel {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quiet {
+  padding-block: 8px;
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  text-align: center;
+}
+
+/* ---- Phone: a bottom sheet resting on the tab bar. Not modal: the map stays live above it. ---- */
+
+@media (max-width: 760px) {
+  .panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    height: min(62dvh, calc(100dvh - var(--topbar-h) - var(--dock-h) - 24px));
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+
+  .margin {
+    min-height: 48px;
+    padding-left: 16px;
+  }
+
+  .close {
+    width: 40px;
+    height: 40px;
+  }
+
+  .intro {
+    padding: 16px 16px 2px;
+  }
+
+  .tabsBar {
+    padding: 10px 16px;
+  }
+
+  .content {
+    padding: 8px 16px 24px;
+  }
+
+  .footer {
+    padding: 10px 16px;
+  }
+
+  .neighbours {
+    gap: 0 12px;
+  }
+
+  .neighbours > :global(.eyebrow) {
+    width: 80px;
+    padding-top: 14px;
+  }
+
+  .linkList {
+    gap: 0 14px;
+  }
+
+  .linkBtn,
+  .emptyLink {
+    min-height: 40px;
+    font-size: 0.9375rem;
+  }
+
+  .name {
+    font-size: 1.75rem;
+  }
+
+  .tagline {
+    font-size: var(--text-base);
+  }
+
+  .facts {
+    margin-top: 14px;
+  }
+
+  .fact {
+    padding-right: 14px;
+  }
+
+  .fact + .fact {
+    padding-left: 14px;
+  }
+
+  .trail {
+    margin-inline: -6px;
+  }
+
+  .step::after,
+  .seg-walked::after {
+    left: 21px;
+  }
+}

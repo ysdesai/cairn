@@ -1,0 +1,63 @@
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* A hairline runs out from each label, as on a ruled sheet. */
+.head::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--line);
+}
+
+.ticks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ticks li {
+  position: relative;
+  padding-left: 22px;
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* A short horizontal tick, like a mark on a scale bar. */
+.ticks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 12px;
+  height: 1.5px;
+  background: var(--ember);
+}
+
+.slips li::before {
+  background: var(--ink-3);
+}
+
+.idea {
+  font-size: var(--text-md);
+  line-height: 1.62;
+  color: var(--ink);
+  max-width: 62ch;
+}
+
+.note {
+  margin-top: 10px;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--ink-3);
+}

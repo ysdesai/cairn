@@ -1,0 +1,88 @@
+.art {
+  flex: none;
+  overflow: visible;
+}
+
+.art path,
+.art ellipse {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.contours ellipse {
+  stroke: var(--contour);
+  stroke-width: 1px;
+}
+
+.ground {
+  stroke: var(--line-3);
+  stroke-width: 1px;
+}
+
+.peak {
+  stroke: var(--ink-2);
+  stroke-width: 1.4px;
+}
+
+.crease {
+  stroke: var(--ink-3);
+  stroke-width: 1px;
+  opacity: 0.7;
+}
+
+.pole,
+.pennant,
+.ripple {
+  transform-box: fill-box;
+}
+
+.pole {
+  stroke: var(--glow-2);
+  stroke-width: 1.4px;
+  transform-origin: 50% 100%;
+  animation: plant 520ms var(--ease-out) 260ms both;
+}
+
+.pennant {
+  fill: var(--glow-2);
+  stroke: var(--glow-2);
+  stroke-width: 1px;
+  transform-origin: 0% 50%;
+  animation: unfurl 420ms var(--ease-back) 700ms both;
+}
+
+.ripple {
+  stroke: var(--glow-2);
+  stroke-width: 1.25px;
+  transform-origin: 50% 50%;
+  animation: ripple 1700ms var(--ease-out) 760ms both;
+}
+
+@keyframes plant {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes unfurl {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(2.9);
+    opacity: 0;
+  }
+}

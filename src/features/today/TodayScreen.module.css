@@ -1,0 +1,248 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px 22px;
+  flex-wrap: wrap;
+}
+
+.budget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.have {
+  color: var(--ink-2);
+  font-size: var(--text-base);
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--s-16);
+  align-items: start;
+}
+
+.route {
+  min-width: 0;
+}
+
+/* The left column: the route, the one clear next call, then the new problems waiting on deck. */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+  min-width: 0;
+}
+
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.deckList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Phone only: where you stand, in one line, before the route. */
+.glance {
+  display: none;
+}
+
+.standing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+  min-width: 0;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-width: 0;
+}
+
+/* The altimeter: gauge on the left, the reading beside it. */
+.altitude {
+  display: flex;
+  gap: var(--s-6);
+  align-items: stretch;
+}
+
+.reading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.numeral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.facts > div {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.pace dd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.streak {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.streakCount {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.streakCount :global(.stat) {
+  font-size: var(--text-3xl);
+}
+
+.streakCount > span:last-child:not(:global(.num)) {
+  flex-basis: 100%;
+  font-size: var(--text-sm);
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.suggest {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.suggest > * {
+  max-width: 100%;
+}
+
+.detail {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  margin-bottom: var(--s-2);
+}
+
+@media (max-width: 999px) {
+  .cols {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-12);
+  }
+
+}
+
+/* On a tablet the standing column becomes a two-column sheet instead of one long strip. */
+@media (min-width: 641px) and (max-width: 999px) {
+  .standing {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-10);
+    row-gap: var(--s-10);
+  }
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .glance {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 0 0 var(--s-8);
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: var(--text-sm);
+  }
+
+  .glancePace {
+    color: var(--ink-3);
+  }
+
+  .main {
+    gap: var(--s-8);
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .start {
+    width: 100%;
+    height: 48px;
+  }
+
+  .budget {
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .have {
+    display: none;
+  }
+
+  .rebuild.rebuild [class*='kbd'] {
+    display: none;
+  }
+
+  .seg.seg {
+    --h: 40px;
+  }
+
+  .seg.seg button {
+    padding: 0 9px;
+  }
+
+  .rebuild.rebuild {
+    height: 40px;
+  }
+
+  .altitude {
+    gap: var(--s-4);
+  }
+
+  .standing {
+    gap: var(--s-8);
+  }
+}

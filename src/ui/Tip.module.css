@@ -1,0 +1,39 @@
+.tip {
+  z-index: var(--z-tooltip);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 280px;
+  padding: 6px 9px;
+  border-radius: var(--r-sm);
+  background: var(--ink);
+  color: var(--on-ink);
+  font-size: var(--text-xs);
+  font-weight: 450;
+  line-height: 1.35;
+  box-shadow: var(--shadow-2);
+  user-select: none;
+  transform-origin: var(--radix-tooltip-content-transform-origin);
+  animation: tip-in 140ms var(--ease-out);
+}
+
+.tip[data-state='closed'] {
+  animation: tip-out 90ms var(--ease-in-out) forwards;
+}
+
+.kbd {
+  opacity: 0.85;
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes tip-out {
+  to {
+    opacity: 0;
+  }
+}

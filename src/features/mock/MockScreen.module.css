@@ -1,0 +1,6 @@
+/* The headline takes focus when a new state opens (see MockScreen.tsx). It is a landing point,
+   not a control, so it carries no ring. */
+.stage h1:focus,
+.stage h1:focus-visible {
+  outline: none;
+}

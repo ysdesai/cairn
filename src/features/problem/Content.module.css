@@ -1,0 +1,37 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: var(--s-2);
+}
+
+/* Quiet and last, set apart by a hairline. */
+.leave {
+  display: flex;
+  margin-top: var(--s-12);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line);
+}
+
+.unsolve {
+  margin-left: calc(var(--s-3) * -1);
+  color: var(--danger-ink);
+}
+
+.unsolve:hover:not(:disabled) {
+  background: var(--danger-wash);
+  color: var(--danger-ink);
+}
+
+@media (pointer: coarse) {
+  .unsolve {
+    min-height: 40px;
+  }
+}
+
+.mockNote {
+  max-width: 54ch;
+  margin: 0;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}

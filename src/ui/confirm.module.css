@@ -1,0 +1,17 @@
+.confirm {
+  --modal-w: 420px;
+  gap: 10px;
+}
+
+.body {
+  color: var(--ink-2);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}

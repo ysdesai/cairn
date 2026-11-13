@@ -1,0 +1,178 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-popover) + 5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 32px 0 min(33vh, 320px);
+  background: var(--paper);
+}
+
+.overlay:focus {
+  outline: none;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* First light: the alpenglow comes up from behind the range. */
+.sun {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(140vw, 1500px);
+  height: 62%;
+  margin-left: calc(min(140vw, 1500px) / -2);
+  background: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    color-mix(in oklch, var(--glow-1) 78%, transparent) 0%,
+    color-mix(in oklch, var(--glow-2) 52%, transparent) 30%,
+    color-mix(in oklch, var(--glow-3) 22%, transparent) 58%,
+    transparent 80%
+  );
+  animation: rise-sun 3.2s var(--ease-out) 0.15s both;
+}
+
+:global(:root[data-theme='dark']) .sun {
+  background: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    color-mix(in oklch, var(--glow-1) 60%, transparent) 0%,
+    color-mix(in oklch, var(--glow-2) 40%, transparent) 30%,
+    color-mix(in oklch, var(--glow-3) 18%, transparent) 58%,
+    transparent 80%
+  );
+}
+
+.range {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: min(40vh, 400px);
+  pointer-events: none;
+}
+
+.layer {
+  animation: rise-range 1.5s var(--ease-out) calc(0.25s + var(--i) * 0.2s) both;
+}
+
+.body {
+  fill: color-mix(in oklch, var(--paper) var(--fill), transparent);
+}
+
+.ridge,
+.echo {
+  fill: none;
+  stroke: var(--contour-strong);
+  stroke-width: 1.25px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.echo {
+  stroke: var(--contour);
+  stroke-width: 1px;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(760px, 100%);
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.headline {
+  font-size: clamp(5rem, 2rem + 17vw, 11.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-weight: 300;
+}
+
+.lede {
+  max-width: 36ch;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+  margin: 14px 0 10px;
+  border-block: 1px solid var(--line-2);
+}
+
+.totals > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 8px 18px;
+}
+
+.totals > div + div {
+  border-left: 1px solid var(--line-2);
+}
+
+.totals dt {
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.totals dd {
+  margin: 0;
+  order: -1;
+  font-size: var(--text-3xl);
+}
+
+.rise {
+  animation: rise-text 900ms var(--ease-out) var(--d, 0s) both;
+}
+
+@keyframes rise-sun {
+  from {
+    transform: translateY(45%);
+    opacity: 0;
+  }
+}
+
+@keyframes rise-range {
+  from {
+    transform: translateY(46px);
+    opacity: 0;
+  }
+}
+
+@keyframes rise-text {
+  from {
+    transform: translateY(14px);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 520px) {
+  .totals dd {
+    font-size: var(--text-2xl);
+  }
+
+  .totals > div {
+    padding: 14px 4px 16px;
+  }
+
+  .range {
+    height: min(34vh, 300px);
+  }
+}

@@ -1,0 +1,39 @@
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+
+.saved {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--moss-ink);
+  animation: saved-in var(--dur-3) var(--ease-out);
+}
+
+.saved svg {
+  width: 11px;
+  height: 11px;
+  stroke-width: 2.5;
+}
+
+@keyframes saved-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+
+@media (max-width: 520px) {
+  /* Time and Space can hold a whole sentence of complexity; give each the full width. */
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}

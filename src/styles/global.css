@@ -1,0 +1,347 @@
+/* Fonts: self-hosted, so the app works offline and from any static host. */
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
+@import '@fontsource-variable/geist/index.css';
+@import '@fontsource-variable/geist-mono/index.css';
+@import './tokens.css';
+
+/* ---- Reset ---------------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  scrollbar-gutter: stable;
+  /* Nothing may widen the page: decoration that bleeds past the edge is clipped, not scrolled to. */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  font-feature-settings: 'ss01', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+  transition: background-color var(--dur-3) var(--ease-out), color var(--dur-3) var(--ease-out);
+}
+
+/* Paper grain. A fixed layer under everything, so surfaces stay clean and scrolling stays cheap. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35  0 0 0 0 0.3  0 0 0 0 0.22  0 0 0 0.16 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+}
+
+:root[data-theme='dark'] body::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.8  0 0 0 0 0.85  0 0 0 0 1  0 0 0 0.09 0'/></filter><rect width='240' height='240' filter='url(%23n)'/></svg>");
+}
+
+#root {
+  isolation: isolate;
+  min-height: 100dvh;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-size: inherit;
+  font-weight: inherit;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: inherit;
+  touch-action: manipulation;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+svg {
+  overflow: visible;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+::selection {
+  background: var(--ember-wash-2);
+  color: var(--ink);
+}
+
+/* Focus is always visible for keyboard users, never for mouse clicks. */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Quiet scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-3) transparent;
+}
+
+/* Placeholders are text someone has to read, so they use --ink-3 (4.5:1 on every surface);
+   --ink-4 is for decoration and disabled marks only. */
+::placeholder {
+  color: var(--ink-3);
+  opacity: 1;
+}
+
+/* ---- Type roles ------------------------------------------------------------------------------
+   Names and headlines are Fraunces. Interface text is Geist. Measurements are Geist Mono.
+   Use these classes instead of restating the font settings. */
+
+/* Small capitals in mono: section labels, map marginalia, table heads. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Headlines. */
+.display {
+  font-family: var(--font-serif);
+  font-weight: 340;
+  line-height: 1.04;
+  letter-spacing: -0.024em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 40, 'WONK' 0;
+  font-optical-sizing: none;
+}
+
+.display-1 {
+  font-size: clamp(2.25rem, 1.1rem + 3.7vw, 4rem);
+}
+
+.display-2 {
+  font-size: clamp(1.75rem, 1.25rem + 1.7vw, 2.75rem);
+}
+
+.display em,
+.title em {
+  font-style: italic;
+  font-weight: 320;
+}
+
+/* Section and panel titles. */
+.title {
+  font-family: var(--font-serif);
+  font-size: var(--text-xl);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.014em;
+  font-variation-settings: 'opsz' 60, 'SOFT' 30, 'WONK' 0;
+  font-optical-sizing: none;
+}
+
+.title-sm {
+  font-size: var(--text-lg);
+}
+
+/* Place names, as on a map: topics and problems when they are being shown off. */
+.place {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 430;
+  letter-spacing: -0.005em;
+  font-variation-settings: 'opsz' 24, 'SOFT' 60, 'WONK' 0;
+  font-optical-sizing: none;
+}
+
+/* Big numerals. */
+.stat {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  font-variant-numeric: lining-nums tabular-nums;
+  font-variation-settings: 'opsz' 144, 'SOFT' 20, 'WONK' 0;
+  font-optical-sizing: none;
+}
+
+/* Inline measurements: counts, dates, times. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.015em;
+  /* A mono space is far wider than a sans one; keep dates like "Fri, Nov 13" from opening up. */
+  word-spacing: -0.2em;
+}
+
+.muted {
+  color: var(--ink-3);
+}
+
+.subtle {
+  color: var(--ink-2);
+}
+
+.accent {
+  color: var(--ember-ink);
+}
+
+/* ---- Layout helpers -------------------------------------------------------------------------- */
+
+/* A standard scrolling screen: centred column, clear of the top bar and the dock. */
+.page {
+  width: 100%;
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: calc(var(--topbar-h) + var(--s-8)) var(--gutter) var(--dock-clearance);
+}
+
+.rule {
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--line);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.truncate {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Shared keyframes ------------------------------------------------------------------------ */
+
+@keyframes cairn-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cairn-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes cairn-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+@keyframes cairn-march {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+@keyframes cairn-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+/* People who ask for less motion get none of the decorative kind. Framer Motion follows the
+   same setting through <MotionConfig reducedMotion="user"> in App.tsx. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

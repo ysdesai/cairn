@@ -1,0 +1,289 @@
+.wrap {
+  position: relative;
+  width: 100%;
+}
+
+.stage {
+  position: relative;
+}
+
+.grid {
+  stroke: var(--line);
+  stroke-width: 1px;
+}
+
+.baseline {
+  stroke: var(--line-3);
+  stroke-width: 1px;
+}
+
+.tick,
+.value,
+.valueWeak,
+.label,
+.labelWeak,
+.labelUncharted,
+.weakNote,
+.calloutEyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.tick {
+  fill: var(--ink-3);
+}
+
+.inkTop {
+  stop-color: var(--ink);
+  stop-opacity: 0.26;
+}
+.inkBottom {
+  stop-color: var(--ink);
+  stop-opacity: 0.04;
+}
+.emberTop {
+  stop-color: var(--ember);
+  stop-opacity: 0.34;
+}
+.emberBottom {
+  stop-color: var(--ember);
+  stop-opacity: 0.03;
+}
+
+.strata {
+  stroke: var(--paper);
+  stroke-opacity: 0.7;
+  stroke-width: 1px;
+}
+
+.weakLine {
+  stroke: var(--ink-3);
+  stroke-width: 1px;
+  stroke-dasharray: 2 4;
+}
+
+.weakNote {
+  fill: var(--ink-3);
+}
+
+.plot {
+  cursor: pointer;
+  touch-action: pan-y;
+  border-radius: var(--r-xs);
+}
+
+.plot:focus-visible {
+  outline-offset: 4px;
+}
+
+.plot svg {
+  display: block;
+  max-width: none;
+}
+
+.hitOn {
+  fill: color-mix(in oklch, var(--ink) 6%, transparent);
+}
+
+.ridge,
+.ridgeWeak,
+.ridgeDotted {
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: stroke-width var(--dur-1) var(--ease-out);
+}
+
+.ridge {
+  stroke: var(--ink);
+  stroke-width: 1.25px;
+}
+
+.ridgeWeak {
+  stroke: var(--ember);
+  stroke-width: 1.75px;
+}
+
+.ridgeDotted {
+  stroke: var(--ink-3);
+  stroke-width: 1.25px;
+  stroke-dasharray: 1.5 4;
+}
+
+.ridge[data-on],
+.ridgeDotted[data-on],
+.ridgeWeak[data-on] {
+  stroke-width: 2px;
+}
+
+.peak {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.25px;
+}
+
+.peakWeak {
+  fill: var(--paper);
+  stroke: var(--ember);
+  stroke-width: 1.5px;
+}
+
+.value {
+  fill: var(--ink-2);
+}
+
+.valueWeak {
+  fill: var(--ember-ink);
+  font-weight: 600;
+}
+
+.label {
+  fill: var(--ink-2);
+}
+
+.labelWeak {
+  fill: var(--ember-ink);
+  font-weight: 600;
+}
+
+.labelUncharted {
+  fill: var(--ink-3);
+}
+
+.leader {
+  stroke: var(--ember);
+  stroke-width: 1px;
+}
+
+.callout {
+  fill: var(--ember-ink);
+}
+
+.calloutEyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-size: 11px;
+}
+
+.calloutName {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  font-variation-settings: 'opsz' 24, 'SOFT' 60, 'WONK' 0;
+}
+
+/* The readout: pinned under the chart, so it never covers a neighboring slope. */
+.readout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  min-height: 132px;
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-2);
+}
+
+.readoutEmpty {
+  min-height: 0;
+}
+
+.readHint {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.readTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.readName {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-1) var(--s-4);
+  min-width: 0;
+  flex: 1;
+}
+
+.readTitle {
+  font-size: var(--text-xl);
+  line-height: 1.15;
+}
+
+.of,
+.conf {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.step {
+  display: none;
+}
+
+.open {
+  align-self: flex-start;
+  margin-left: calc(var(--s-3) * -1);
+}
+
+.parts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-2) var(--s-8);
+}
+
+.part {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-xs);
+}
+
+.partLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.partTrack {
+  position: relative;
+  height: 3px;
+  min-width: 16px;
+  border-radius: 2px;
+  background: var(--line-2);
+}
+
+.partTrack > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: var(--ink);
+}
+
+.readNote {
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 999px) {
+  .parts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .readout {
+    min-height: 224px;
+  }
+
+  .step {
+    display: inline-flex;
+  }
+}

@@ -1,0 +1,355 @@
+/* Title block: the cartouche of a printed sheet. Sits on the drawing, so it is backed by glass. */
+.title.title {
+  --frame-bg: var(--glass);
+  width: 268px;
+  backdrop-filter: blur(10px) saturate(1.3);
+}
+
+.titleInner {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 13px 16px 14px;
+}
+
+/* The headline: one sentence from where the climb stands, the camp in italics. */
+.headline {
+  margin: 0;
+  font-size: 1.1875rem;
+  line-height: 1.22;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.headline em {
+  color: var(--ember-ink);
+}
+
+.link {
+  display: inline;
+  padding: 0;
+  border-radius: 2px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--ember) 45%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--dur-1) var(--ease-out);
+}
+
+.link:hover {
+  text-decoration-color: var(--ember);
+}
+
+.figure {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.big {
+  font-size: 2.25rem;
+  color: var(--ink);
+}
+
+.of {
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+.reached {
+  flex-basis: 100%;
+  font-size: var(--text-xs);
+  color: var(--ink-2);
+}
+
+/* Phone: the title block becomes a strip, so it covers a margin and not a mountain. */
+.title.strip {
+  width: min(calc(100vw - 24px), 344px);
+}
+
+.strip .titleInner {
+  gap: 4px;
+  padding: 9px 12px 10px;
+}
+
+.strip .headline {
+  font-size: 1.0625rem;
+  line-height: 1.2;
+  text-wrap: pretty;
+}
+
+.strip .figure {
+  align-items: baseline;
+  gap: 0 8px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.strip .big {
+  font-size: 1.5rem;
+}
+
+.strip .reached {
+  flex-basis: auto;
+  margin-left: auto;
+}
+
+.strip .scale {
+  height: 8px;
+  margin-top: 0;
+}
+
+/* Scale bar */
+.scale {
+  position: relative;
+  height: 14px;
+  margin-top: 2px;
+}
+
+.scale::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--line-2);
+}
+
+.scaleFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: var(--ember);
+  transform-origin: left center;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+
+.scaleTicks {
+  position: absolute;
+  inset: 0;
+}
+
+.tick {
+  position: absolute;
+  top: 3px;
+  width: 1px;
+  height: 4px;
+  margin-left: -0.5px;
+  background: var(--ink-3);
+}
+
+.tickMajor {
+  height: 8px;
+  background: var(--ink-2);
+}
+
+/* Legend: a control at the foot of the map; the card opens above it. */
+.legendBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px 0 14px;
+  border: 1px solid var(--line-2);
+  border-radius: 3px;
+  background: var(--glass);
+  backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: var(--shadow-1);
+  color: var(--ink-2);
+  transition:
+    color var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out);
+}
+
+.legendBtn:hover,
+.legendBtnOpen {
+  background: var(--paper-raised);
+  color: var(--ink);
+}
+
+.legendBtn:hover :global(.eyebrow),
+.legendBtnOpen :global(.eyebrow) {
+  color: var(--ink);
+}
+
+.chev {
+  width: 14px;
+  height: 14px;
+  color: var(--ink-3);
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.chevOpen {
+  transform: rotate(180deg);
+}
+
+.legendPop {
+  z-index: var(--z-popover);
+  width: min(318px, calc(100vw - 24px));
+  max-height: var(--radix-popover-content-available-height);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  outline: none;
+  transform-origin: var(--radix-popover-content-transform-origin);
+  animation: legend-in var(--dur-2) var(--ease-out) both;
+}
+
+.legendPop[data-state='closed'] {
+  animation: legend-out var(--dur-1) var(--ease-out) both;
+}
+
+@keyframes legend-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes legend-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.legend {
+  width: 100%;
+}
+
+.legendBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 14px;
+}
+
+.camps,
+.trails {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camps li,
+.trails li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 34px;
+}
+
+/* One column for every symbol, so the words line up: the camp marks are centred in the width of a trail. */
+.camps li > :first-child {
+  width: 34px;
+  height: 34px;
+  margin-inline: 11px;
+}
+
+.what {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  color: var(--ink-2);
+}
+
+.what b {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.sub {
+  margin-top: 6px;
+}
+
+.legendRule {
+  margin: 4px 0 0;
+}
+
+.promise {
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--ink-3);
+}
+
+.promise .num {
+  color: var(--ink-2);
+}
+
+/* Camera */
+.camera {
+  width: 44px;
+}
+
+.cameraList {
+  display: flex;
+  flex-direction: column;
+}
+
+.cam {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  color: var(--ink-2);
+  transition:
+    color var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out);
+}
+
+.cam + .cam {
+  border-top: 1px solid var(--line);
+}
+
+.cam:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.cam:focus-visible {
+  outline-offset: -3px;
+}
+
+.cam :global(svg) {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+}
+
+.camHere {
+  color: var(--ember-ink);
+}
+
+@media (max-width: 760px) {
+  .legendBtn {
+    height: 44px;
+  }
+
+  .cam {
+    height: 44px;
+  }
+
+  .camps li,
+  .trails li {
+    min-height: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legendPop,
+  .legendPop[data-state='closed'] {
+    animation: none;
+  }
+}

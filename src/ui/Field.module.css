@@ -1,0 +1,107 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aside {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  color: var(--ink-3);
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.control {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper-raised);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--ink);
+  font-size: var(--text-base);
+  line-height: 1.45;
+  transition:
+    box-shadow var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out);
+}
+
+.control:hover:not(:disabled, :focus) {
+  box-shadow: inset 0 0 0 1px var(--line-3);
+}
+
+.control:focus,
+.control:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1.5px var(--focus),
+    0 0 0 3px var(--ember-wash-2);
+}
+
+.control:disabled {
+  opacity: 0.5;
+}
+
+.input {
+  height: 36px;
+  padding: 0 11px;
+}
+
+.textarea {
+  display: block;
+  min-height: 72px;
+  padding: 9px 11px;
+  resize: none;
+  overflow: hidden;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: -0.01em;
+}
+
+.selectWrap {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+.select {
+  height: 36px;
+  padding: 0 30px 0 11px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.chevron {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  margin-top: -3px;
+  color: var(--ink-3);
+  pointer-events: none;
+}
+
+/* iOS zooms the page when a focused control's text is under 16px. */
+@media (pointer: coarse) {
+  .control {
+    font-size: 16px;
+  }
+  .input,
+  .select {
+    height: 42px;
+  }
+}

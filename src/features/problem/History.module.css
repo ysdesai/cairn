@@ -1,0 +1,199 @@
+/* A trail line down the left with a waypoint for each attempt. */
+.trail {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  --t: var(--ink-3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: 0 0 var(--s-5) var(--s-6);
+}
+
+.entry:last-child {
+  padding-bottom: 0;
+}
+
+.entry[data-tone='easy'] {
+  --t: var(--rate-easy);
+}
+.entry[data-tone='struggled'] {
+  --t: var(--rate-struggled);
+}
+.entry[data-tone='help'] {
+  --t: var(--rate-help);
+}
+
+.entry:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 14px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--line-3);
+}
+
+.node {
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--t);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 24px;
+}
+
+.date {
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.what {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.mock {
+  color: var(--ink-3);
+}
+
+.tools {
+  display: inline-flex;
+  gap: 2px;
+  margin: -3px -6px -3px auto;
+}
+
+.tools button {
+  color: var(--ink-3);
+}
+
+.facts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2) var(--s-3);
+}
+
+.minutes {
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+}
+
+.recall {
+  margin: var(--s-1) 0 0;
+  padding: 0;
+  max-width: 56ch;
+  color: var(--ink-2);
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+  font-style: italic;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.recall::before {
+  content: '\201C';
+}
+
+.recall::after {
+  content: '\201D';
+}
+
+.editing .head {
+  margin-bottom: var(--s-1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--paper-sunken);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.formActions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+@media (max-width: 420px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (pointer: coarse) {
+  /* Tap targets of at least 40px. */
+  .tools button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .chip {
+    min-height: 40px;
+    padding: 0 16px;
+  }
+
+  div.segmented {
+    --h: 44px;
+    display: flex;
+    width: 100%;
+  }
+
+  div.segmented button {
+    flex: 1 1 0;
+  }
+}
+
+.warn {
+  color: var(--gold-ink);
+}
+
+/* Before the first attempt: one hollow waypoint at the foot of a trail that has not been walked. */
+.none {
+  position: relative;
+  margin: 0;
+  padding-left: var(--s-6);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.noneNode {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ink-4);
+}

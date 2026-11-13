@@ -1,0 +1,155 @@
+.section {
+  margin-top: var(--s-20);
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-6);
+  padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--line-3);
+}
+
+.head .title {
+  margin-top: 6px;
+}
+
+.summary {
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 84px;
+  gap: var(--s-6);
+  align-items: start;
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.when,
+.used {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 4px;
+}
+
+.used {
+  text-align: right;
+}
+
+.problems {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.problem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  min-height: 40px;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.title {
+  min-width: 0;
+  max-width: 100%;
+  padding: 0;
+  text-align: left;
+  font-family: var(--font-serif);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+  border-radius: var(--r-xs);
+  font-variation-settings: 'opsz' 30, 'SOFT' 30, 'WONK' 0;
+  font-optical-sizing: none;
+  transition: color var(--dur-1) var(--ease-out);
+}
+
+.title:hover {
+  color: var(--ember-ink);
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-3);
+  flex: none;
+}
+
+.mins {
+  min-width: 3.5ch;
+  text-align: right;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--s-4);
+}
+
+@media (max-width: 760px) {
+  .section {
+    margin-top: var(--s-16);
+  }
+
+  .item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-3) var(--s-4);
+  }
+
+  .when {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 0;
+  }
+
+  .used {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .problems {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .problem {
+    flex-wrap: wrap;
+    gap: 2px var(--s-3);
+    padding: 4px 0;
+  }
+
+  .title {
+    min-height: 40px;
+  }
+}

@@ -1,0 +1,34 @@
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 4px;
+  background: var(--paper-sunken);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    inset 0 -1.5px 0 var(--line-2);
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+/* Darkened, not lightened: the glyph keeps full strength against the fill (4.5:1 or more). */
+.onSolid {
+  background: oklch(0 0 0 / 0.22);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.26);
+  color: inherit;
+}

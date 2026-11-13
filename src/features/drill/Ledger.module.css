@@ -1,0 +1,189 @@
+.ledger {
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line-3);
+}
+
+.untestedHead {
+  margin-top: var(--s-12);
+}
+
+/* Shared column grid, so the bars sit on one common scale. */
+.cols,
+.row {
+  display: grid;
+  grid-template-columns: minmax(190px, 1.2fr) minmax(120px, 1.4fr) 52px minmax(0, 1.5fr);
+  align-items: center;
+  column-gap: var(--s-5);
+}
+
+.cols {
+  padding: 10px 0 6px;
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-3);
+  font-size: 10px;
+  line-height: 1;
+  /* Ticks at 0, 50 and 100 on the same track the bars use. */
+  background:
+    linear-gradient(var(--line-3) 0 0) 0 100% / 1px 5px no-repeat,
+    linear-gradient(var(--line-3) 0 0) 50% 100% / 1px 5px no-repeat,
+    linear-gradient(var(--line-3) 0 0) 100% 100% / 1px 5px no-repeat;
+  padding-bottom: 8px;
+}
+
+.scale .num:nth-child(2) {
+  transform: translateX(-2px);
+}
+
+.right {
+  text-align: right;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  min-height: 48px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.name {
+  min-width: 0;
+  color: var(--ink);
+  font-size: 1.0625rem;
+  line-height: 1.25;
+}
+
+.bar {
+  display: block;
+  min-width: 0;
+}
+
+.score {
+  color: var(--ink-2);
+  font-size: var(--text-xs);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.confused,
+.clean {
+  min-width: 0;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+}
+
+.clean {
+  color: var(--ink-3);
+}
+
+/* The 80% tick on a low bar takes the dusk hue, the one a rating of "Needed help" wears. */
+.low > :global(span:last-child:not(:first-child)) {
+  background: var(--dusk);
+}
+
+.lead {
+  color: var(--ink-3);
+}
+
+.top {
+  color: var(--ink);
+}
+
+.rest {
+  color: var(--ink-3);
+}
+
+.untested {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--s-12);
+}
+
+.quiet {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(70px, 0.7fr);
+  align-items: center;
+  column-gap: var(--s-4);
+  min-height: 40px;
+  border-top: 1px solid var(--line);
+}
+
+.quiet .name {
+  color: var(--ink-3);
+  font-size: var(--text-md);
+}
+
+.untested .quiet:nth-child(-n + 2) {
+  border-top: 0;
+}
+
+@media (max-width: 1000px) {
+  .untested {
+    column-gap: var(--s-8);
+  }
+}
+
+@media (max-width: 640px) {
+  .legend {
+    display: none;
+  }
+
+  .cols {
+    display: none;
+  }
+
+  .head {
+    border-bottom-color: var(--line-3);
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name score'
+      'bar bar'
+      'conf conf';
+    row-gap: 8px;
+    padding: 12px 0;
+  }
+
+  .row > :nth-child(1) {
+    grid-area: name;
+  }
+  .row > :nth-child(2) {
+    grid-area: bar;
+  }
+  .row > :nth-child(3) {
+    grid-area: score;
+  }
+  .row > :nth-child(4) {
+    grid-area: conf;
+  }
+
+  .untested {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .untested .quiet:nth-child(2) {
+    border-top: 1px solid var(--line);
+  }
+}

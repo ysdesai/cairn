@@ -1,0 +1,41 @@
+.terrain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.terrain path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+.minor {
+  stroke: var(--contour);
+  stroke-width: 1px;
+}
+
+.major {
+  stroke: var(--contour-strong);
+  stroke-width: 1.25px;
+}
+
+.down {
+  mask-image: linear-gradient(to bottom, black 0%, black 35%, transparent 96%);
+}
+
+.up {
+  mask-image: linear-gradient(to top, black 0%, black 35%, transparent 96%);
+}
+
+.left {
+  mask-image: linear-gradient(to left, black 0%, black 30%, transparent 92%);
+}
+
+.edges {
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+}

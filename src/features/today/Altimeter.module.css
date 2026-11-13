@@ -1,0 +1,117 @@
+.wrap {
+  position: relative;
+  flex: none;
+  border-radius: var(--r-sm);
+}
+
+.trough {
+  fill: var(--paper-sunken);
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+.fill {
+  fill: var(--ember);
+}
+
+.tick {
+  stroke: var(--line-3);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.major {
+  stroke: var(--ink-3);
+}
+
+.heavy {
+  stroke: var(--ink-2);
+}
+
+.scale,
+.edge,
+.plan text,
+.you text {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+.scale {
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.edge {
+  fill: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 10px;
+}
+
+.pole {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.25;
+}
+
+.flag {
+  fill: var(--ink-2);
+}
+
+.plan line {
+  stroke: var(--ink-2);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+}
+
+.plan text {
+  fill: var(--ink-2);
+  text-transform: uppercase;
+}
+
+.you line {
+  stroke: var(--ember);
+  stroke-width: 1.5;
+}
+
+.you path {
+  fill: var(--ember);
+}
+
+.you text {
+  fill: var(--ember-ink);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.hit {
+  cursor: default;
+}
+
+.wrap:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.elevation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.numeral {
+  font-size: var(--text-5xl);
+  color: var(--ink);
+}
+
+.of {
+  font-size: var(--text-md);
+}
+
+@media (max-width: 640px) {
+  .numeral {
+    font-size: var(--text-4xl);
+  }
+}

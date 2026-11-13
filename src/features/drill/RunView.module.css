@@ -1,0 +1,354 @@
+.run {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+}
+
+/* ---- Progress: a count, a ruled bar with one tick per card, the streak ---- */
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: 40px;
+}
+
+.count {
+  flex: none;
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ticks {
+  display: flex;
+  flex: 1 1 auto;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tick {
+  flex: 1 1 0;
+  height: 4px;
+  min-width: 2px;
+  border-radius: 1px;
+  background: var(--line-2);
+}
+
+.right {
+  background: var(--moss);
+}
+
+.wrong {
+  background: var(--dusk);
+}
+
+.current {
+  background: var(--ember);
+}
+
+.streak {
+  flex: none;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.streak .num {
+  color: var(--ink);
+  font-size: var(--text-xs);
+}
+
+.streak .hot {
+  color: var(--ember-ink);
+}
+
+.end {
+  flex: none;
+  margin-right: calc(var(--s-3) * -1);
+}
+
+/* ---- The card ---- */
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+}
+
+.problem {
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 1.875rem);
+  line-height: 1.12;
+  outline: none;
+}
+
+.summary {
+  margin-top: var(--s-2);
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+/* ---- Options ---- */
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+
+.option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 56px;
+  padding: 8px 16px;
+  border-radius: var(--r-lg);
+  background: var(--paper-raised);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: 500;
+  line-height: 1.25;
+  transition:
+    background-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out),
+    opacity var(--dur-2) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+}
+
+.option[data-state='open']:hover {
+  box-shadow: inset 0 0 0 1px var(--line-3);
+  background: var(--paper);
+}
+
+.option[data-state='open']:active {
+  transform: translateY(1px);
+}
+
+.option:disabled {
+  cursor: default;
+  color: var(--ink);
+}
+
+.option[data-state='right'] {
+  background: var(--moss-wash);
+  box-shadow: inset 0 0 0 1.5px var(--moss);
+}
+
+.option[data-state='wrong'] {
+  background: var(--dusk-wash);
+  box-shadow: inset 0 0 0 1.5px var(--dusk);
+}
+
+.option[data-state='dim'] {
+  opacity: 0.45;
+}
+
+.keycap {
+  flex: none;
+}
+
+.optionName {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.glyph {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.option[data-state='right'] .glyph {
+  color: var(--moss-ink);
+}
+
+.option[data-state='wrong'] .glyph {
+  color: var(--dusk-ink);
+}
+
+/* ---- The reveal ----
+   Verdict and the two actions share one row, so Next sits right under the options and the
+   whole card, options and reveal fit a laptop screen without scrolling. */
+
+.reveal {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'verdict actions'
+    'tell tell'
+    'meaning meaning'
+    'also also';
+  align-items: center;
+  gap: var(--s-3) var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line-3);
+}
+
+.verdict {
+  grid-area: verdict;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-md);
+  font-weight: 500;
+  color: var(--dusk-ink);
+  outline: none;
+}
+
+.verdict[data-right='true'] {
+  color: var(--moss-ink);
+}
+
+.verdict svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.time {
+  flex: none;
+  white-space: nowrap;
+  margin-left: var(--s-1);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  font-weight: 400;
+}
+
+.actions {
+  grid-area: actions;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.tell {
+  grid-area: tell;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clue {
+  max-width: 62ch;
+  color: var(--ink);
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+.meaning,
+.also {
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: var(--text-base);
+  line-height: 1.55;
+}
+
+.meaning {
+  grid-area: meaning;
+}
+
+.also {
+  grid-area: also;
+}
+
+.meaning :global(.place) {
+  color: var(--ink);
+  font-size: 1.0625rem;
+}
+
+.also :global(.place) {
+  color: var(--ink);
+}
+
+@media (max-width: 640px) {
+  .run {
+    gap: var(--s-3);
+  }
+
+  /* Count and streak on one line, the ticks on their own. */
+  .progress {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      'count streak end'
+      'ticks ticks ticks';
+    row-gap: 0;
+  }
+
+  .count {
+    grid-area: count;
+  }
+
+  .streak {
+    grid-area: streak;
+    justify-self: end;
+  }
+
+  .end {
+    grid-area: end;
+    margin-right: calc(var(--s-3) * -1);
+  }
+
+  .ticks {
+    grid-area: ticks;
+  }
+
+  .card {
+    gap: var(--s-2);
+  }
+
+  .summary {
+    margin-top: var(--s-1);
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+
+  .options {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-2);
+  }
+
+  .option {
+    min-height: 52px;
+  }
+
+  /* After an answer only the right option and the one picked stay; the rest is noise. */
+  .option[data-state='dim'] {
+    display: none;
+  }
+
+  .reveal {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    gap: var(--s-3);
+    padding-top: var(--s-3);
+  }
+
+  .verdict,
+  .tell,
+  .meaning,
+  .also,
+  .actions {
+    grid-area: auto;
+  }
+
+  /* Next stays right under the verdict, ahead of the clue, so it is in reach without scrolling. */
+  .actions {
+    justify-content: space-between;
+  }
+
+  .actions > button:last-child {
+    flex: 1 1 auto;
+    max-width: 220px;
+  }
+}

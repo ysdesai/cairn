@@ -1,0 +1,110 @@
+.route {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.count {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  color: var(--ink-2);
+  font-size: var(--text-md);
+}
+
+.numeral {
+  color: var(--ink);
+  font-size: var(--text-3xl);
+}
+
+/* The trail: stones joined by a line that is solid where you have been and dashed where you have not. */
+.ladder {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  max-width: 320px;
+}
+
+.rung {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.rung:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: calc(var(--w) + 6px);
+  right: 6px;
+  height: 0;
+  border-top: 1px dashed var(--line-3);
+}
+
+.rung.cleared:not(:last-child)::after {
+  border-top: 1px solid var(--ink-3);
+}
+
+.stone {
+  display: block;
+  width: var(--w);
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--line-3);
+}
+
+.cleared .stone {
+  background: var(--ink-2);
+  box-shadow: none;
+}
+
+.upNext .stone {
+  box-shadow: inset 0 0 0 1.5px var(--ember);
+}
+
+.glow .cleared .stone {
+  background: var(--alpenglow);
+}
+
+.days {
+  color: var(--ink-3);
+  font-size: var(--text-2xs);
+  line-height: 1;
+}
+
+.cleared .days {
+  color: var(--ink-2);
+}
+
+.upNext .days {
+  color: var(--ember-ink);
+}
+
+.when {
+  color: var(--ink);
+  font-size: var(--text-base);
+}
+
+.done {
+  color: var(--ink-2);
+}
+
+@media (max-width: 520px) {
+  .route {
+    gap: var(--s-4);
+  }
+
+  .numeral {
+    font-size: var(--text-2xl);
+  }
+}

@@ -1,0 +1,149 @@
+.block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-4);
+  isolation: isolate;
+}
+
+/* Contour lines, different for every problem: each waypoint has its own country. They stay inside the
+   sheet body so the scroll area never grows sideways. */
+.terrain {
+  position: absolute;
+  inset: calc(var(--s-6) * -1) calc(var(--s-6) * -1) auto;
+  height: 260px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.8;
+  /* The lines belong to the headline; they are gone by the time the reading text starts. */
+  mask-image: linear-gradient(to bottom, black 20%, transparent 92%);
+}
+
+.terrain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 80% at 80% 10%, var(--sky-glow), transparent 75%);
+}
+
+.margin {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.margin > .eyebrow {
+  flex: none;
+}
+
+/* A ruled scale bar: a baseline, a tick every 8px, a taller one every 40. */
+.scale {
+  flex: 1 1 auto;
+  min-width: var(--s-4);
+  height: 7px;
+  background-image:
+    repeating-linear-gradient(to right, var(--line-3) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to right, var(--line-2) 0 1px, transparent 1px 8px), linear-gradient(var(--line-2) 0 0);
+  background-size:
+    100% 7px,
+    100% 3px,
+    100% 1px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+}
+
+.name {
+  max-width: 24ch;
+  margin-top: var(--s-2);
+  font-size: var(--text-2xl);
+  text-wrap: balance;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-3) var(--s-4);
+}
+
+.tipTarget {
+  display: inline-flex;
+  border-radius: var(--r-full);
+}
+
+/* The number typed into LeetCode: full contrast, ahead of the grade. */
+.number {
+  color: var(--ink);
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+}
+
+.alt {
+  margin: calc(var(--s-1) * -1) 0 0;
+  max-width: 54ch;
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.solved {
+  font-size: var(--text-sm);
+}
+
+.summary {
+  max-width: 54ch;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  line-height: 1.55;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+/* Chip-shaped, quiet, hatched: a thing that is there but covered. */
+.hidden {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  min-height: 30px;
+  margin: 0;
+  padding: 3px 12px;
+  border-radius: 15px;
+  box-shadow: inset 0 0 0 1px var(--line-3);
+  background-image: repeating-linear-gradient(-45deg, var(--line) 0 1px, transparent 1px 6px);
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  text-align: left;
+}
+
+.hidden svg {
+  width: 13px;
+  height: 13px;
+  flex: none;
+}
+
+@media (pointer: coarse) {
+  .hidden {
+    min-height: 40px;
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
+@media (max-width: 720px) {
+  .terrain {
+    inset: calc(var(--s-4) * -1 - 2px) calc(var(--s-4) * -1) auto;
+  }
+
+  .name {
+    font-size: 1.75rem;
+  }
+}

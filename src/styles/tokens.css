@@ -1,0 +1,258 @@
+/*
+ * Cairn design tokens.
+ *
+ * The idea: a field atlas. In daylight it is ink and contour lines on warm paper; at night it is
+ * a dark massif with ember light on the route. Cool ink, warm accent. Three typefaces with fixed
+ * jobs: Fraunces for names and headlines, Geist for the interface, Geist Mono for measurements.
+ *
+ * Every colour a component uses comes from here, so both themes stay coherent.
+ */
+
+:root {
+  /* ---- Type ---- */
+  --font-serif: 'Fraunces Variable', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, monospace;
+
+  --text-2xs: 0.6875rem; /* 11  eyebrow labels, keycaps */
+  --text-xs: 0.75rem; /* 12  meta, chips */
+  --text-sm: 0.8125rem; /* 13  secondary text */
+  --text-base: 0.875rem; /* 14  interface default */
+  --text-md: 1rem; /* 16  reading text, row titles */
+  --text-lg: 1.25rem; /* 20 */
+  --text-xl: 1.5rem; /* 24 */
+  --text-2xl: 2rem; /* 32 */
+  --text-3xl: 2.75rem; /* 44 */
+  --text-4xl: 4rem; /* 64 */
+  --text-5xl: 5.5rem; /* 88 */
+
+  /* ---- Space (4px grid) ---- */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+  --s-16: 64px;
+  --s-20: 80px;
+  --s-24: 96px;
+
+  /* ---- Shape ---- */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 18px;
+  --r-full: 999px;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-back: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 200ms;
+  --dur-3: 320ms;
+  --dur-4: 560ms;
+
+  /* ---- Layout ---- */
+  --topbar-h: 56px;
+  --dock-h: 58px;
+  --dock-gap: 18px;
+  --content-max: 1180px;
+  --gutter: clamp(16px, 4vw, 44px);
+  /* Space every scrolling screen leaves at the bottom so the dock never covers content. */
+  --dock-clearance: calc(var(--dock-h) + var(--dock-gap) * 2 + env(safe-area-inset-bottom, 0px));
+
+  /* ---- Layers ---- */
+  --z-raised: 10;
+  --z-bar: 40;
+  --z-scrim: 50;
+  --z-sheet: 60;
+  --z-dialog: 70;
+  --z-popover: 80;
+  --z-toast: 90;
+  --z-tooltip: 100;
+}
+
+/* ============================================================================================
+   Day: ink on warm paper
+   ============================================================================================ */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Paper: the page and the surfaces stacked on it */
+  --paper: oklch(0.966 0.011 85);
+  --paper-raised: oklch(0.988 0.006 85);
+  --paper-sunken: oklch(0.943 0.013 85);
+  --paper-deep: oklch(0.912 0.017 84);
+
+  /* Ink: text and drawn marks */
+  --ink: oklch(0.225 0.028 258);
+  --ink-2: oklch(0.4 0.024 258);
+  --ink-3: oklch(0.49 0.02 258); /* the lightest ink that is still body-text readable: 4.8:1 or more on every paper */
+  --ink-4: oklch(0.69 0.016 258); /* placeholders, disabled, decoration only */
+  --on-ink: oklch(0.975 0.008 85);
+
+  /* Rules and borders */
+  --line: oklch(0.225 0.028 258 / 0.1);
+  --line-2: oklch(0.225 0.028 258 / 0.17);
+  --line-3: oklch(0.225 0.028 258 / 0.34);
+
+  /* Ember: the accent. The route, the next action, progress. */
+  --ember: oklch(0.635 0.205 38); /* drawn marks: lines, rings, glyphs */
+  --ember-solid: oklch(0.565 0.195 36); /* fills that carry text */
+  --ember-solid-hover: oklch(0.52 0.19 35);
+  --ember-ink: oklch(0.5 0.185 35); /* accent text on paper */
+  --ember-wash: oklch(0.635 0.205 38 / 0.09);
+  --ember-wash-2: oklch(0.635 0.205 38 / 0.17);
+  --on-ember: oklch(0.99 0.012 85);
+
+  /* Alpenglow: the gradient the summit wears. Use sparingly, for achievement. */
+  --glow-1: oklch(0.8 0.15 75);
+  --glow-2: oklch(0.66 0.2 38);
+  --glow-3: oklch(0.6 0.2 8);
+  --alpenglow: linear-gradient(105deg, var(--glow-1), var(--glow-2) 48%, var(--glow-3));
+
+  /* Supporting hues. Each has a mark colour, a text colour and a wash. */
+  --moss: oklch(0.6 0.13 152);
+  --moss-ink: oklch(0.44 0.11 153);
+  --moss-wash: oklch(0.6 0.13 152 / 0.13);
+  --lake: oklch(0.58 0.135 248);
+  --lake-ink: oklch(0.45 0.135 252);
+  --lake-wash: oklch(0.58 0.135 248 / 0.12);
+  --gold: oklch(0.74 0.145 84);
+  --gold-ink: oklch(0.48 0.105 78);
+  --gold-wash: oklch(0.74 0.145 84 / 0.2);
+  --dusk: oklch(0.56 0.15 300);
+  --dusk-ink: oklch(0.45 0.15 300);
+  --dusk-wash: oklch(0.56 0.15 300 / 0.12);
+  --danger: oklch(0.55 0.21 25);
+  --danger-ink: oklch(0.48 0.2 25);
+  --danger-wash: oklch(0.55 0.21 25 / 0.1);
+
+  /* Difficulty, as trail grades: green circle, blue square, black diamond. */
+  --grade-easy: var(--moss);
+  --grade-medium: var(--lake);
+  --grade-hard: var(--ink);
+
+  /* How an attempt went. "Needed help" is dusk, not red: it is information, not failure. */
+  --rate-easy: var(--moss);
+  --rate-easy-ink: var(--moss-ink);
+  --rate-easy-wash: var(--moss-wash);
+  --rate-struggled: var(--gold);
+  --rate-struggled-ink: var(--gold-ink);
+  --rate-struggled-wash: var(--gold-wash);
+  --rate-help: var(--dusk);
+  --rate-help-ink: var(--dusk-ink);
+  --rate-help-wash: var(--dusk-wash);
+
+  /* Terrain */
+  --contour: oklch(0.52 0.075 62 / 0.3);
+  --contour-strong: oklch(0.48 0.08 60 / 0.5);
+  --relief-0: oklch(0.905 0.036 148);
+  --relief-1: oklch(0.918 0.034 128);
+  --relief-2: oklch(0.932 0.03 106);
+  --relief-3: oklch(0.944 0.027 92);
+  --relief-4: oklch(0.955 0.022 84);
+  --relief-5: oklch(0.966 0.016 80);
+  --relief-6: oklch(0.978 0.01 78);
+  --relief-7: oklch(0.992 0.004 250);
+  --relief-shade: oklch(0.3 0.04 60 / 0.1);
+  --relief-light: oklch(1 0 0 / 0.55);
+  --water: oklch(0.82 0.06 235);
+  --water-line: oklch(0.6 0.1 240 / 0.6);
+
+  /* Depth */
+  --shadow-1: 0 1px 2px oklch(0.3 0.04 60 / 0.07);
+  --shadow-2: 0 1px 1px oklch(0.3 0.04 60 / 0.05), 0 6px 14px -4px oklch(0.3 0.04 60 / 0.1),
+    0 14px 30px -12px oklch(0.3 0.04 60 / 0.12);
+  --shadow-3: 0 2px 4px oklch(0.3 0.04 60 / 0.06), 0 14px 28px -8px oklch(0.3 0.04 60 / 0.16),
+    0 36px 72px -20px oklch(0.3 0.04 60 / 0.26);
+  --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.75);
+  --scrim: oklch(0.3 0.03 258 / 0.32);
+  --glass: oklch(0.985 0.006 85 / 0.78);
+  --grain-opacity: 0.5;
+  --sky-glow: oklch(0.8 0.15 60 / 0.16);
+  --focus: oklch(0.565 0.195 36);
+}
+
+/* ============================================================================================
+   Night: ember light on a dark massif
+   ============================================================================================ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --paper: oklch(0.178 0.021 258);
+  --paper-raised: oklch(0.218 0.025 258);
+  --paper-sunken: oklch(0.152 0.019 258);
+  --paper-deep: oklch(0.128 0.017 258);
+
+  --ink: oklch(0.945 0.013 85);
+  --ink-2: oklch(0.8 0.016 252);
+  --ink-3: oklch(0.665 0.02 252);
+  --ink-4: oklch(0.47 0.022 252);
+  --on-ink: oklch(0.178 0.021 258);
+
+  --line: oklch(0.945 0.013 85 / 0.08);
+  --line-2: oklch(0.945 0.013 85 / 0.14);
+  --line-3: oklch(0.945 0.013 85 / 0.28);
+
+  --ember: oklch(0.755 0.17 50);
+  --ember-solid: oklch(0.745 0.17 50);
+  --ember-solid-hover: oklch(0.79 0.16 54);
+  --ember-ink: oklch(0.8 0.15 56);
+  --ember-wash: oklch(0.755 0.17 50 / 0.12);
+  --ember-wash-2: oklch(0.755 0.17 50 / 0.22);
+  --on-ember: oklch(0.19 0.035 45);
+
+  --glow-1: oklch(0.86 0.14 82);
+  --glow-2: oklch(0.74 0.18 45);
+  --glow-3: oklch(0.66 0.2 8);
+
+  --moss: oklch(0.74 0.14 152);
+  --moss-ink: oklch(0.8 0.13 152);
+  --moss-wash: oklch(0.74 0.14 152 / 0.14);
+  --lake: oklch(0.72 0.125 245);
+  --lake-ink: oklch(0.79 0.11 245);
+  --lake-wash: oklch(0.72 0.125 245 / 0.15);
+  --gold: oklch(0.82 0.14 86);
+  --gold-ink: oklch(0.85 0.125 88);
+  --gold-wash: oklch(0.82 0.14 86 / 0.14);
+  --dusk: oklch(0.72 0.14 300);
+  --dusk-ink: oklch(0.8 0.12 300);
+  --dusk-wash: oklch(0.72 0.14 300 / 0.16);
+  --danger: oklch(0.68 0.19 25);
+  --danger-ink: oklch(0.76 0.16 25);
+  --danger-wash: oklch(0.68 0.19 25 / 0.14);
+
+  --grade-hard: var(--ink);
+
+  --contour: oklch(0.72 0.05 250 / 0.2);
+  --contour-strong: oklch(0.78 0.05 250 / 0.36);
+  --relief-0: oklch(0.165 0.024 252);
+  --relief-1: oklch(0.19 0.03 254);
+  --relief-2: oklch(0.218 0.035 256);
+  --relief-3: oklch(0.248 0.039 258);
+  --relief-4: oklch(0.285 0.041 260);
+  --relief-5: oklch(0.335 0.04 262);
+  --relief-6: oklch(0.41 0.036 264);
+  --relief-7: oklch(0.54 0.03 264);
+  --relief-shade: oklch(0 0 0 / 0.28);
+  --relief-light: oklch(1 0 0 / 0.07);
+  --water: oklch(0.3 0.06 240);
+  --water-line: oklch(0.6 0.09 240 / 0.5);
+
+  --shadow-1: 0 1px 2px oklch(0 0 0 / 0.4);
+  --shadow-2: 0 2px 6px oklch(0 0 0 / 0.35), 0 12px 28px -8px oklch(0 0 0 / 0.5);
+  --shadow-3: 0 8px 20px -6px oklch(0 0 0 / 0.5), 0 32px 72px -16px oklch(0 0 0 / 0.7);
+  --edge-light: inset 0 1px 0 oklch(1 0 0 / 0.07);
+  --scrim: oklch(0.08 0.015 258 / 0.6);
+  --glass: oklch(0.218 0.025 258 / 0.72);
+  --grain-opacity: 0.6;
+  --sky-glow: oklch(0.7 0.19 45 / 0.13);
+  --focus: oklch(0.79 0.16 54);
+}

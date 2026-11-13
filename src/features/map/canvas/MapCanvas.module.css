@@ -1,0 +1,744 @@
+/* The survey sheet. Everything is drawn with tokens, so the day sheet and the night sheet are the same drawing. */
+
+.root {
+  /* How strongly the lit ground and the stars show: low sun on paper by day, the lit massif by night. */
+  --light-gain: 0.62;
+  --bloom-gain: 0.6;
+  --star-op: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--paper);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  contain: layout paint;
+}
+
+.root:active {
+  cursor: grabbing;
+}
+
+:global(:root[data-theme='dark']) .root {
+  --light-gain: 1;
+  --bloom-gain: 1;
+  --star-op: 1;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.svg text {
+  pointer-events: none;
+}
+
+/* ---- The sheet: paper, neatline, grid, marginalia ---- */
+
+.paper {
+  fill: var(--paper-raised);
+}
+
+.paperEdge {
+  fill: none;
+  stroke: var(--line-2);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.neat {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+  vector-effect: non-scaling-stroke;
+}
+
+.neatOuter {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.tick {
+  stroke: var(--ink-2);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.gridLine {
+  stroke: var(--ink);
+  stroke-opacity: 0.1;
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.gridNum {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+}
+
+.noteStrong {
+  fill: var(--ink-2);
+}
+
+.scaleFill {
+  fill: var(--ink);
+}
+
+.scaleLine {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.scaleNum {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--ink-2);
+}
+
+.northHalf {
+  fill: var(--ink);
+}
+
+.northLine {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.northLetter {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-style: italic;
+  fill: var(--ink);
+}
+
+/* ---- Terrain ---- */
+
+.terrain {
+  animation: terrain-in 520ms var(--ease-out) both;
+}
+
+@keyframes terrain-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.contour {
+  fill: none;
+  stroke: var(--contour);
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.index {
+  stroke: var(--contour-strong);
+  stroke-width: 1.05;
+}
+
+/* Close-up detail: supplementary contours and woodland appear as the sheet is brought nearer. */
+.fine,
+.trees {
+  opacity: 0;
+  transition: opacity var(--dur-3) var(--ease-out);
+}
+
+.fine {
+  stroke-width: 0.55;
+  stroke-dasharray: 4 3;
+}
+
+.trees {
+  fill: var(--moss);
+  fill-opacity: 0.55;
+}
+
+.root[data-zoom='in'] .fine,
+.root[data-zoom='in'] .trees {
+  opacity: 1;
+}
+
+.root[data-zoom='mid'] .trees {
+  opacity: 0.55;
+}
+
+.shadeFill {
+  fill: var(--relief-shade);
+}
+
+.lightFill {
+  fill: var(--relief-light);
+}
+
+.elev {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  fill: var(--ink-2);
+  paint-order: stroke;
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+  font-variant-numeric: tabular-nums;
+}
+
+.water {
+  fill: var(--water);
+  stroke: var(--water-line);
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+.depth {
+  fill: none;
+  stroke: var(--water-line);
+  stroke-width: 0.6;
+  opacity: 0.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.stream {
+  fill: none;
+  stroke: var(--water-line);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.waterName {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  fill: var(--lake-ink);
+  font-variation-settings: 'opsz' 24, 'SOFT' 60, 'WONK' 0;
+  font-optical-sizing: none;
+}
+
+/* ---- Trails ---- */
+
+.trail {
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.trailDim {
+  opacity: 0.34;
+}
+
+.trailCase,
+.trailGlow,
+.trailLine {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.trailCase {
+  stroke: var(--paper);
+  stroke-opacity: 0.62;
+  stroke-width: 5.5;
+}
+
+.trailGlow {
+  stroke: var(--ember-wash-2);
+  stroke-width: 7;
+}
+
+.walked .trailLine {
+  stroke: var(--ember);
+  stroke-width: 2.3;
+}
+
+.open .trailLine {
+  stroke: var(--ember);
+  stroke-width: 1.8;
+  stroke-dasharray: 7 5;
+  stroke-linecap: butt;
+}
+
+.ahead .trailCase {
+  stroke-width: 4.5;
+}
+
+.ahead .trailLine {
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+  stroke-dasharray: 0.01 5.2;
+}
+
+.trailHot .trailCase {
+  stroke-width: 8;
+}
+
+.trailHot .trailLine {
+  stroke-width: 3;
+}
+
+.trailHot.open .trailLine,
+.trailHot.ahead .trailLine {
+  stroke-width: 2.4;
+}
+
+.trailHot.ahead .trailLine {
+  stroke: var(--ink-2);
+}
+
+.chevron {
+  fill: none;
+  stroke: var(--ember);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---- First light ---- */
+
+.light {
+  pointer-events: none;
+}
+
+.pools,
+.bloom {
+  opacity: var(--light-gain);
+}
+
+/* The walked trail, as a long exposure: a wide soft wash, a nearer glow, a bright core. Under the crisp line. */
+.bloomWide,
+.bloomMid,
+.bloomCore {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bloomWide {
+  stroke: var(--glow-2);
+  stroke-width: 46;
+  stroke-opacity: 0.075;
+}
+
+.bloomMid {
+  stroke: var(--glow-2);
+  stroke-width: 20;
+  stroke-opacity: 0.15;
+}
+
+.bloomCore {
+  stroke: var(--glow-1);
+  stroke-width: 8;
+  stroke-opacity: 0.3;
+}
+
+:global(:root[data-theme='dark']) .bloomMid {
+  stroke-opacity: 0.2;
+}
+
+:global(:root[data-theme='dark']) .bloomCore {
+  stroke-opacity: 0.4;
+}
+
+/* ---- Sky: a few stars over the highest ground, at night ---- */
+
+.sky {
+  opacity: var(--star-op);
+  pointer-events: none;
+}
+
+.stars circle {
+  fill: var(--ink);
+  opacity: 0.8;
+}
+
+.stars path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+  opacity: 0.7;
+}
+
+.twinkle {
+  animation: twinkle 3.8s ease-in-out infinite alternate;
+}
+
+.twinkle:nth-child(2n) {
+  animation-delay: -1.7s;
+  animation-duration: 4.6s;
+}
+
+@keyframes twinkle {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* ---- Camps ---- */
+
+.camp {
+  cursor: pointer;
+  outline: none;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.campDim {
+  opacity: 0.5;
+}
+
+.hit {
+  fill: transparent;
+  stroke: none;
+}
+
+/*
+ * Strokes are written once, here, as a number of sheet units times --sw. On the sheet --sw is 1;
+ * the legend and the camp panel draw the same symbol small, with a heavier --sw so it stays a mark.
+ */
+.symbol {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.campHot .symbol {
+  transform: scale(1.1);
+}
+
+.halo {
+  fill: var(--paper);
+  fill-opacity: 0.95;
+}
+
+.track {
+  fill: none;
+  stroke: var(--line-3);
+  stroke-width: calc(2px * var(--sw, 1));
+}
+
+.ring {
+  fill: none;
+  stroke-width: calc(2px * var(--sw, 1));
+}
+
+.campAhead .ring {
+  stroke: var(--ink-3);
+  stroke-dasharray: 1.8 4.2;
+  stroke-linecap: round;
+  stroke-width: calc(2.3px * var(--sw, 1));
+}
+
+.campReady .ring {
+  stroke: var(--ink-2);
+  stroke-width: calc(2.2px * var(--sw, 1));
+}
+
+.campActive .ring {
+  stroke: none;
+}
+
+.campComplete .ring {
+  stroke: var(--ink);
+  stroke-width: calc(2.7px * var(--sw, 1));
+}
+
+.campMastered .ring {
+  stroke-width: calc(3.4px * var(--sw, 1));
+}
+
+.arc {
+  fill: none;
+  stroke: var(--ember);
+  stroke-width: calc(4.6px * var(--sw, 1));
+}
+
+.glyph {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: calc(1.6px * var(--sw, 1));
+  stroke-linejoin: round;
+}
+
+.campReady .glyph {
+  stroke: var(--ink-2);
+}
+
+.campActive .glyph {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.glyphDot {
+  fill: var(--ink-3);
+}
+
+.campReady .glyphDot {
+  fill: var(--ink-2);
+}
+
+.campActive .glyphDot {
+  fill: var(--paper);
+}
+
+.pole {
+  stroke: var(--ink);
+  stroke-width: calc(2.1px * var(--sw, 1));
+  stroke-linecap: round;
+}
+
+.pennant {
+  fill: var(--ember);
+}
+
+/* Next on the route: a second ring, and a slow breath outward from the camp. */
+.recRing {
+  fill: none;
+  stroke: var(--ember);
+  stroke-width: calc(1.5px * var(--sw, 1));
+  stroke-opacity: 0.85;
+}
+
+.pulse {
+  fill: none;
+  stroke: var(--ember);
+  stroke-width: 1.8;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: camp-pulse 3.4s var(--ease-out) infinite;
+}
+
+.pulseLate {
+  animation-delay: 1.7s;
+}
+
+@keyframes camp-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* The open camp: a warm disc under it and survey brackets round it. Unmistakable, and not the same as hover. */
+.selDisc {
+  fill: var(--ember-wash-2);
+  stroke: var(--ember);
+  stroke-width: 1.2;
+  stroke-opacity: 0.55;
+}
+
+.reticle {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linecap: square;
+}
+
+.focusRing {
+  fill: none;
+  stroke: var(--focus);
+  stroke-width: 2.4;
+  opacity: 0;
+}
+
+.camp:focus-visible .focusRing {
+  opacity: 1;
+}
+
+.beaconTag {
+  fill: var(--ember-solid);
+}
+
+.beaconText {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  fill: var(--on-ember);
+  text-anchor: middle;
+}
+
+.name {
+  font-size: 18px;
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-opacity: 0.9;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.campSelected .name {
+  font-weight: 640;
+}
+
+.campAhead .name {
+  fill: var(--ink-2);
+}
+
+.campNext .name {
+  fill: var(--ember-ink);
+}
+
+/* How much of the camp is solved: set a step larger than before so it reads at the fitted zoom. */
+.stat {
+  font-size: 13.5px;
+  font-weight: 500;
+  fill: var(--ink-2);
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-opacity: 0.9;
+  stroke-width: 4.5px;
+  stroke-linejoin: round;
+}
+
+.campAhead .stat {
+  fill: var(--ink-3);
+}
+
+/* Revisions waiting: a lake-blue spot at the camp's north-east shoulder. Dark enough for white figures. */
+.badgeDisc {
+  fill: var(--lake-ink);
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+
+.badgeText {
+  font-size: 11.5px;
+  font-weight: 700;
+  fill: var(--paper);
+  text-anchor: middle;
+}
+
+/* The symbol drawn on its own: legend, camp panel, command palette. */
+.mark {
+  display: block;
+  flex: none;
+  overflow: visible;
+}
+
+.beaconMark,
+.trailMark {
+  display: block;
+  flex: none;
+}
+
+/* ---- Hover card ---- */
+
+.tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: var(--z-raised);
+  width: max-content;
+  max-width: calc(100% - 20px);
+  pointer-events: none;
+  animation: tip-in var(--dur-1) var(--ease-out) both;
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.tipName {
+  margin-bottom: 10px;
+  font-size: var(--text-md);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.tipGrid {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 6px 18px;
+  margin: 0;
+}
+
+.tipGrid > div {
+  min-width: 0;
+}
+
+.tipGrid dt {
+  white-space: nowrap;
+}
+
+.tipGrid dd {
+  margin: 3px 0 0;
+  font-size: var(--text-sm);
+  color: var(--ink);
+}
+
+.tipMeter {
+  margin-top: 10px;
+}
+
+/* Invisible rulers: the heights of the top bar and the dock, as the shell currently sets them. */
+.probeTop,
+.probeBottom {
+  position: absolute;
+  left: 0;
+  width: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.probeTop {
+  top: 0;
+  height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+}
+
+.probeBottom {
+  bottom: 0;
+  height: var(--dock-clearance);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .twinkle,
+  .pulse {
+    animation: none;
+  }
+
+  .pulse {
+    opacity: 0.35;
+  }
+}
+
+@media (max-width: 760px) {
+  .probeBottom {
+    height: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px));
+  }
+}

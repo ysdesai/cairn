@@ -1,0 +1,26 @@
+.footer {
+  display: none;
+}
+
+.clock {
+  flex: none;
+  color: var(--ink);
+  font-size: var(--text-lg);
+  letter-spacing: -0.04em;
+}
+
+.over {
+  color: var(--gold-ink);
+}
+
+.action {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .footer {
+    display: flex;
+    gap: var(--s-4);
+  }
+}

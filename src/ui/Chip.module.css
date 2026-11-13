@@ -1,0 +1,136 @@
+.chip {
+  --c: var(--ink-3);
+  --c-ink: var(--ink-2);
+  --c-wash: var(--line);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--r-full);
+  color: var(--c-ink);
+  line-height: 1;
+  white-space: nowrap;
+  flex: none;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sans {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 450;
+}
+
+.outline {
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--c) 42%, transparent);
+}
+
+.soft {
+  background: var(--c-wash);
+}
+
+.neutral {
+  --c: var(--ink-3);
+  --c-ink: var(--ink-2);
+  --c-wash: var(--line);
+}
+.ember {
+  --c: var(--ember);
+  --c-ink: var(--ember-ink);
+  --c-wash: var(--ember-wash);
+}
+.moss {
+  --c: var(--moss);
+  --c-ink: var(--moss-ink);
+  --c-wash: var(--moss-wash);
+}
+.lake {
+  --c: var(--lake);
+  --c-ink: var(--lake-ink);
+  --c-wash: var(--lake-wash);
+}
+.gold {
+  --c: var(--gold);
+  --c-ink: var(--gold-ink);
+  --c-wash: var(--gold-wash);
+}
+.dusk {
+  --c: var(--dusk);
+  --c-ink: var(--dusk-ink);
+  --c-wash: var(--dusk-wash);
+}
+.danger {
+  --c: var(--danger);
+  --c-ink: var(--danger-ink);
+  --c-wash: var(--danger-wash);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c);
+  flex: none;
+}
+
+.icon {
+  display: inline-flex;
+}
+
+.icon :global(svg) {
+  width: 12px;
+  height: 12px;
+  stroke-width: 2;
+}
+
+/* Toggle chips */
+.toggle {
+  height: 28px;
+  padding: 0 11px;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out);
+}
+
+.toggle:active {
+  transform: scale(0.97);
+}
+
+.off {
+  color: var(--ink-2);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+.off:hover {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line-3);
+}
+
+.on {
+  background: var(--c-wash);
+  color: var(--c-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--c) 60%, transparent);
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  opacity: 0.7;
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .toggle {
+    height: 40px;
+    padding: 0 14px;
+  }
+}

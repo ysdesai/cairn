@@ -1,0 +1,214 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: var(--s-8) var(--s-12);
+  align-items: start;
+}
+
+.map {
+  min-width: 0;
+}
+
+.measure {
+  width: 100%;
+}
+
+.wrap {
+  position: relative;
+  max-width: 100%;
+}
+
+.plot {
+  touch-action: pan-y;
+  border-radius: var(--r-xs);
+}
+
+.plot:focus-visible {
+  outline-offset: 8px;
+}
+
+.plot svg {
+  display: block;
+  max-width: none;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  fill: var(--ink-3);
+}
+
+/* Four steps of ember. Empty days are an outline so the grid still reads as a calendar. */
+.cell {
+  fill: none;
+  stroke: var(--line-2);
+  stroke-width: 1;
+}
+
+/* Four steps of the Insights heat ramp (see heat.css), so day and night read alike. */
+.step1 {
+  fill: var(--heat-2);
+  stroke: none;
+}
+
+.step2 {
+  fill: var(--heat-3);
+  stroke: none;
+}
+
+.step3 {
+  fill: var(--heat-4);
+  stroke: none;
+}
+
+.step4 {
+  fill: var(--heat-5);
+  stroke: none;
+}
+
+.today {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.cursor {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.25;
+  pointer-events: none;
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2) var(--s-5);
+  margin-top: var(--s-4);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+
+.range {
+  font-size: var(--text-2xs);
+}
+
+.legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend svg {
+  width: 11px;
+}
+
+.legend svg:first-of-type {
+  margin-left: var(--s-2);
+}
+
+.legend svg:last-of-type {
+  margin-right: var(--s-2);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.figures {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding: var(--s-4) 0;
+  border-top: 1px solid var(--line);
+}
+
+.figure:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.figure dd {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-3);
+  margin: 0;
+}
+
+.big {
+  font-size: var(--text-4xl);
+}
+
+.mid {
+  font-size: var(--text-2xl);
+}
+
+.unit {
+  font-size: var(--text-xs);
+}
+
+.note {
+  max-width: 30ch;
+  font-size: var(--text-base);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.lede {
+  max-width: 30ch;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.lede :global(.num) {
+  font-size: 0.9em;
+  color: var(--ink);
+}
+
+@media (max-width: 999px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .figures {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--s-5) var(--s-8);
+  }
+
+  .figure,
+  .figure:first-child {
+    padding: 0;
+    border: 0;
+  }
+
+  .streak {
+    flex-basis: 100%;
+  }
+
+  .note,
+  .lede {
+    max-width: 46ch;
+  }
+}
+
+@media (max-width: 520px) {
+  .big {
+    font-size: var(--text-3xl);
+  }
+}

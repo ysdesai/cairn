@@ -1,0 +1,30 @@
+.grade {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  line-height: 1;
+}
+
+.grade svg {
+  flex: none;
+}
+
+.easy svg {
+  fill: var(--grade-easy);
+}
+.medium svg {
+  fill: var(--grade-medium);
+}
+.hard svg {
+  fill: var(--grade-hard);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}

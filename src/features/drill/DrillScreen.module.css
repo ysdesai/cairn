@@ -1,0 +1,12 @@
+/* The header's contour backdrop reaches a little past the page; where the page is as wide as
+   the window that would make it scroll sideways. */
+@media (max-width: 1200px) {
+  .root {
+    overflow-x: clip;
+  }
+}
+
+/* A run is a working screen: less air above, so the card and its reveal fit a laptop. */
+.root[data-phase='run'] {
+  padding-top: calc(var(--topbar-h) + var(--s-4));
+}

@@ -1,0 +1,33 @@
+/*
+ * The heat ramp for Insights: five steps of ember, each with the numeral color chosen for it, so
+ * fill and text are never set apart. Opaque fills (mixed into the paper) keep the contrast
+ * fixed whatever sits behind. Day: peach to solid ember, ink numerals on steps 1 to 4 and light
+ * numerals only on the solid fill. Night: the ramp gains light instead of fading to brown, and
+ * the top two steps take dark numerals.
+ */
+:root {
+  --heat-1: color-mix(in oklch, var(--ember) 16%, var(--paper));
+  --heat-2: color-mix(in oklch, var(--ember) 34%, var(--paper));
+  --heat-3: color-mix(in oklch, var(--ember) 54%, var(--paper));
+  --heat-4: color-mix(in oklch, var(--ember) 74%, var(--paper));
+  --heat-5: var(--ember-solid);
+  --heat-fg-1: var(--ink);
+  --heat-fg-2: var(--ink);
+  --heat-fg-3: var(--ink);
+  --heat-fg-4: var(--ink);
+  --heat-fg-5: var(--on-ember);
+}
+
+:root[data-theme='dark'] {
+  /* Lightness and chroma rise together at the ember's own hue: no drift through violet, no brown. */
+  --heat-1: oklch(from var(--ember) 0.35 0.085 h);
+  --heat-2: oklch(from var(--ember) 0.43 0.11 h);
+  --heat-3: oklch(from var(--ember) 0.51 0.135 h);
+  --heat-4: oklch(from var(--ember) 0.69 0.16 h);
+  --heat-5: var(--ember-solid);
+  --heat-fg-1: var(--ink);
+  --heat-fg-2: var(--ink);
+  --heat-fg-3: var(--ink);
+  --heat-fg-4: var(--on-ember);
+  --heat-fg-5: var(--on-ember);
+}

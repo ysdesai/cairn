@@ -1,0 +1,127 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line-2);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 2rem 72px minmax(0, 1fr) 13rem;
+  align-items: center;
+  gap: var(--s-6);
+  padding-block: var(--s-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.no {
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+
+.glyph {
+  display: block;
+  overflow: visible;
+}
+
+.g,
+.gd,
+.ge {
+  fill: none;
+  stroke-width: 1.25px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.g {
+  stroke: var(--ink-3);
+}
+
+.gd {
+  stroke: var(--ink-3);
+  stroke-dasharray: 2 3;
+}
+
+.ge {
+  stroke: var(--ember);
+}
+
+.dot {
+  fill: var(--ember);
+}
+
+.cellOff {
+  fill: none;
+  stroke: var(--line-3);
+  stroke-width: 1px;
+}
+
+.cellMid {
+  fill: var(--heat-2);
+}
+
+.cellLit {
+  fill: var(--heat-4);
+}
+
+.barOff {
+  fill: var(--line-3);
+}
+
+.barLit {
+  fill: var(--ember);
+}
+
+.text {
+  min-width: 0;
+}
+
+.body {
+  margin-top: var(--s-1);
+  max-width: 52ch;
+  color: var(--ink-2);
+  font-size: var(--text-base);
+}
+
+.after {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.afterWhen {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 400;
+  color: var(--ink-2);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-6);
+  color: var(--ink-3);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 860px) {
+  .item {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: var(--s-2) var(--s-5);
+    align-items: start;
+  }
+
+  .no {
+    display: none;
+  }
+
+  .text {
+    grid-column: 2;
+  }
+
+  .after {
+    grid-column: 2;
+  }
+}

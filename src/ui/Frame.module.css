@@ -1,0 +1,99 @@
+.frame {
+  --frame-bg: var(--paper);
+  --tick: 9px;
+  --tick-c: var(--ink-3);
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--line-2);
+  border-radius: 3px;
+  background-color: var(--frame-bg);
+}
+
+.plain {
+  --frame-bg: transparent;
+}
+
+.plain .label {
+  background: var(--paper);
+}
+
+.raised {
+  --frame-bg: var(--paper-raised);
+  box-shadow: var(--shadow-2);
+}
+
+.raised .label {
+  background: linear-gradient(to bottom, var(--paper) 50%, var(--paper-raised) 50%);
+}
+
+/* Survey ticks: a short L at each corner, drawn over the border. */
+.ticks {
+  background-image:
+    linear-gradient(var(--tick-c) 0 0), linear-gradient(var(--tick-c) 0 0), linear-gradient(var(--tick-c) 0 0),
+    linear-gradient(var(--tick-c) 0 0), linear-gradient(var(--tick-c) 0 0), linear-gradient(var(--tick-c) 0 0),
+    linear-gradient(var(--tick-c) 0 0), linear-gradient(var(--tick-c) 0 0);
+  background-origin: border-box;
+  background-clip: border-box;
+  background-repeat: no-repeat;
+  background-size:
+    var(--tick) 1px,
+    1px var(--tick),
+    var(--tick) 1px,
+    1px var(--tick),
+    var(--tick) 1px,
+    1px var(--tick),
+    var(--tick) 1px,
+    1px var(--tick);
+  background-position:
+    top left,
+    top left,
+    top right,
+    top right,
+    bottom left,
+    bottom left,
+    bottom right,
+    bottom right;
+}
+
+.edge {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.label {
+  padding: 0 8px;
+  pointer-events: auto;
+}
+
+.aside {
+  color: var(--ink-3);
+}
+
+.pad-none {
+  padding: 0;
+}
+.pad-sm {
+  padding: 14px;
+}
+.pad-md {
+  padding: 22px;
+}
+.pad-lg {
+  padding: 32px;
+}
+
+@media (max-width: 640px) {
+  .pad-md {
+    padding: 18px 16px;
+  }
+  .pad-lg {
+    padding: 22px 18px;
+  }
+}

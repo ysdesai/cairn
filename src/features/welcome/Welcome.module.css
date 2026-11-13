@@ -1,0 +1,130 @@
+/* Doubled class so these beat the Modal's own padding and gap whatever the stylesheet order. */
+.modal.modal {
+  gap: 0;
+  padding: 10px;
+}
+
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Never shrink inside the modal: on a short screen the modal scrolls instead of clipping the actions. */
+  flex: none;
+  overflow: hidden;
+  background-color: var(--paper-raised);
+}
+
+.terrain {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 250px;
+  pointer-events: none;
+}
+
+.title {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-10) var(--s-10) var(--s-6);
+}
+
+.name {
+  margin-top: calc(var(--s-1) * -1);
+  font-size: clamp(3.25rem, 2.4rem + 4vw, 4.75rem);
+  line-height: 0.95;
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding: 0 var(--s-10) var(--s-10);
+}
+
+.lede {
+  max-width: 44ch;
+  color: var(--ink-2);
+  font-size: var(--text-md);
+  line-height: 1.6;
+}
+
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--line-2);
+}
+
+.consequence {
+  color: var(--ink-2);
+  font-size: var(--text-base);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.backup {
+  min-height: 44px;
+}
+
+.fileError {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.spin {
+  animation: spin 900ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 520px) {
+  .title {
+    padding: var(--s-8) var(--s-6) var(--s-5);
+  }
+
+  .body {
+    gap: var(--s-6);
+    padding: 0 var(--s-6) var(--s-6);
+  }
+}
+
+/* Short phones: tighten the title page so both first-run actions sit in view without scrolling. */
+@media (max-height: 800px) {
+  .title {
+    gap: var(--s-2);
+    padding-top: var(--s-6);
+    padding-bottom: var(--s-3);
+  }
+
+  .name {
+    font-size: 3rem;
+  }
+
+  .lede {
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+
+  .body {
+    gap: var(--s-4);
+    padding-bottom: var(--s-5);
+  }
+
+  .plan {
+    gap: var(--s-2);
+    padding-top: var(--s-4);
+  }
+}

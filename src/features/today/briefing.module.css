@@ -1,0 +1,4 @@
+/* A headline clause stays whole, so a long headline breaks between its sentences rather than inside one. */
+.clause {
+  display: inline-block;
+}

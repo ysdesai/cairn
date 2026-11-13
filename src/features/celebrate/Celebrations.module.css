@@ -1,0 +1,209 @@
+/*
+ * Cards sit at the top of the screen, just under the bar, centered. Toasts live at the foot of the
+ * screen, so the two never meet, and over a phone's full-height sheet the card covers its title
+ * strip rather than the log bar where the next action is. The layer is above the sheet and the
+ * dialogs, below the palette and the toasts. Radix turns off pointer events on <body> while a
+ * sheet is open, so the cards turn them back on.
+ */
+.region {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px) + 10px);
+  z-index: calc(var(--z-dialog) + 5);
+  display: flex;
+  justify-content: center;
+  width: min(520px, calc(100vw - 24px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.card,
+.pillWrap {
+  pointer-events: auto;
+  width: 100%;
+}
+
+.pillWrap {
+  display: flex;
+  justify-content: center;
+  width: auto;
+}
+
+.frame {
+  overflow: hidden;
+}
+
+/* A hairline that runs down while the card waits, paused while it is being read. */
+.dwell {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--ember);
+  opacity: 0.7;
+  transform-origin: left center;
+  animation: dwell linear forwards;
+}
+
+@keyframes dwell {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.card .close {
+  --h: 32px;
+}
+
+/* ---- Mastered ---- */
+
+.mastered {
+  max-width: 460px;
+}
+
+.masteredBody {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 48px 16px 20px;
+}
+
+.glow {
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  width: 150px;
+  height: 150px;
+  margin-top: -75px;
+  background: radial-gradient(closest-side, var(--sky-glow), transparent);
+  pointer-events: none;
+}
+
+.cairn {
+  position: relative;
+  flex: none;
+}
+
+.text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.problem {
+  color: var(--ink);
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.line {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+/* ---- Topic complete ---- */
+
+.summitCard {
+  width: min(520px, 100%);
+}
+
+.summitBody {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 22px 48px 24px 22px;
+}
+
+.art {
+  width: 132px;
+  height: auto;
+}
+
+.summitText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.topicName {
+  font-size: var(--text-2xl);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.facts {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+}
+
+.actions {
+  display: flex;
+  margin-top: 8px;
+}
+
+/* ---- Streak ---- */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px 0 12px;
+  border-radius: var(--r-full);
+  background: var(--paper-raised);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    var(--edge-light),
+    var(--shadow-2);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.flame {
+  width: 15px;
+  height: 15px;
+  color: var(--ember);
+  stroke-width: 2;
+}
+
+@media (max-width: 520px) {
+  .masteredBody {
+    gap: 14px;
+    padding: 14px 48px 16px 16px;
+  }
+
+  .summitBody {
+    gap: 14px;
+    padding: 18px 48px 22px 16px;
+  }
+
+  .art {
+    width: 92px;
+  }
+
+  .topicName {
+    font-size: var(--text-xl);
+  }
+
+  .card .close {
+    --h: 40px;
+  }
+}

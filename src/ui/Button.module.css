@@ -1,0 +1,175 @@
+.btn {
+  --h: 36px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: var(--h);
+  padding: 0 14px;
+  border-radius: var(--r-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out),
+    box-shadow var(--dur-1) var(--ease-out),
+    transform var(--dur-1) var(--ease-out),
+    opacity var(--dur-1) var(--ease-out);
+}
+
+.btn:active:not(:disabled, [aria-disabled='true']) {
+  transform: translateY(1px) scale(0.985);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sm {
+  --h: 30px;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: var(--r-sm);
+  font-size: var(--text-sm);
+}
+
+.lg {
+  --h: 46px;
+  gap: 10px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: var(--text-md);
+}
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+.iconOnly {
+  width: var(--h);
+  padding: 0;
+  flex: none;
+}
+
+.icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.icon :global(svg) {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.75;
+}
+
+.lg .icon :global(svg) {
+  width: 18px;
+  height: 18px;
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.kbd {
+  margin-left: 2px;
+  margin-right: -4px;
+}
+
+/* The one next action. Reads as a lit ember: warm fill, a soft bloom underneath. */
+.primary {
+  background: var(--ember-solid);
+  color: var(--on-ember);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.24),
+    inset 0 -1px 0 oklch(0 0 0 / 0.14),
+    0 1px 2px oklch(0.3 0.12 35 / 0.32),
+    0 6px 16px -6px var(--ember);
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--ember-solid-hover);
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 0.24),
+    inset 0 -1px 0 oklch(0 0 0 / 0.14),
+    0 1px 2px oklch(0.3 0.12 35 / 0.32),
+    0 10px 22px -6px var(--ember);
+}
+
+.secondary {
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow:
+    inset 0 0 0 1px var(--line-2),
+    var(--edge-light),
+    var(--shadow-1);
+}
+
+.secondary:hover:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px var(--line-3),
+    var(--edge-light),
+    var(--shadow-1);
+}
+
+.ghost {
+  color: var(--ink-2);
+}
+
+.ghost:hover:not(:disabled) {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.ghost[aria-pressed='true'],
+.ghost[data-active='true'] {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.danger {
+  color: var(--danger-ink);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--danger) 40%, transparent);
+}
+
+.danger:hover:not(:disabled) {
+  background: var(--danger-wash);
+}
+
+/* Phone widths: every control is at least 40px, whether or not the device reports a touch pointer. */
+@media (max-width: 760px) {
+  .btn,
+  .sm {
+    --h: 40px;
+  }
+  .lg {
+    --h: 46px;
+  }
+}
+
+@media (pointer: coarse) {
+  /* No keyboard, no key hints. */
+  .kbd {
+    display: none;
+  }
+  .btn {
+    --h: 44px;
+  }
+  .sm {
+    --h: 40px;
+  }
+  .lg {
+    --h: 50px;
+  }
+}

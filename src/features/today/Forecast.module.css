@@ -1,0 +1,133 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.chart {
+  border-radius: var(--r-sm);
+}
+
+.chart:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.plot {
+  position: relative;
+}
+
+.base {
+  stroke: var(--line-3);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.cap {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.capLabel,
+.initial,
+.date,
+.count,
+.today {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+}
+
+.count {
+  fill: var(--ink-2);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.date {
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.today {
+  fill: var(--ember-ink);
+  font-weight: 600;
+}
+
+/* Ink, with ember only on today: the next place to be. */
+.solid {
+  fill: var(--ink-3);
+}
+
+.solidToday {
+  fill: var(--ember);
+}
+
+.held {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+
+.hatch {
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+}
+
+.none {
+  stroke: var(--line-3);
+  stroke-width: 1;
+}
+
+.day {
+  cursor: default;
+}
+
+.day[data-active] .solid {
+  fill: var(--ink);
+}
+
+.day[data-active] .solidToday {
+  fill: var(--ember-ink);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-3);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  flex: none;
+}
+
+.swSolid {
+  background: var(--ink-3);
+}
+
+.swHeld {
+  border: 1px solid var(--ink-3);
+  background: repeating-linear-gradient(135deg, var(--ink-3) 0 1px, transparent 1px 3px);
+}
+
+.swCap {
+  height: 0;
+  border-top: 1px dashed var(--ink-3);
+}
