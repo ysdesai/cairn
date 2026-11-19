@@ -8,6 +8,7 @@ import { VOLATILE_STORAGE_MESSAGE, useStore } from '../../state/store'
 import { downloadExport, readImportFile } from '../../state/transfer'
 import { summarize, type DataSummary } from '../../state/validate'
 import { Button, Frame, confirm, fade, toast } from '../../ui'
+import { GithubSync } from './GithubSync'
 import { Section } from './Section'
 import s from './Settings.module.css'
 
@@ -153,7 +154,7 @@ export function DataSection() {
       blurb={
         volatile
           ? 'This browser is not keeping anything: what you log is gone when the tab closes. Use Export to save a copy you can import later.'
-          : 'Everything lives in this browser, in one file you can export. Clearing site data would erase it, so keep a copy somewhere safe.'
+          : 'Everything lives in this browser, and clearing site data erases it. Save to GitHub below so that never costs you your progress.'
       }
     >
       {data.demo ? <p className={s.note}>The demo is loaded. The figures below describe the demo, not your own history.</p> : null}
@@ -161,6 +162,8 @@ export function DataSection() {
       {!hasHistory ? <p className={s.footnote}>Solved problems, revisions and notes will be counted here as you log them.</p> : null}
 
       <div className={s.actions}>
+        <GithubSync />
+
         {data.demo ? (
           <Action
             name="Export"

@@ -44,7 +44,9 @@ The schedule is never stored. It is replayed from your logged attempts, so backd
 
 ## Your data
 
-Progress is kept in this browser's `localStorage` as one JSON document. **Settings → Your data** exports it to a file and imports it again, which is also how you move between devices.
+Progress is kept in this browser's `localStorage` as one JSON document, which clearing site data erases. **Settings → Your data → Save to GitHub** makes that harmless. Paste a [fine-grained token](https://github.com/settings/personal-access-tokens/new) with access to only this repository and *Contents: Read and write*. Every change is committed a few seconds later to `cairn-progress.json` on the `progress` branch (not `main`, so saving never redeploys the site). When the browser is empty, Cairn reads that file back on its own, no token needed while the repository is public; paste the token again to resume saving. It also keeps several devices in step: the newer document wins. Note that in a public repository the progress file is public too.
+
+Export and import also work by hand.
 
 **Load demo data** fills the app with about ten weeks of generated history so you can see every screen populated. Your own data is set aside while the demo is loaded and comes back when you exit it.
 

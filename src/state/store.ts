@@ -31,6 +31,7 @@ import type {
   SessionPlan,
   Settings,
 } from './schema'
+import { flushSync, scheduleSync } from './githubSync'
 import { defaultAdapter, STORAGE_KEYS, type StorageAdapter } from './storage'
 import { parseAppData } from './validate'
 
@@ -130,6 +131,7 @@ async function saveNow(): Promise<void> {
     const text = JSON.stringify(data)
     await storage().set(STORAGE_KEYS.data, text)
     synced = { updatedAt: data.updatedAt, raw: text }
+    scheduleSync(data)
     // A volatile adapter "succeeds" into memory; its warning stays for the whole visit.
     if (useStore.getState().storageError && !storage().volatile) useStore.setState({ storageError: null })
   } catch (err) {
@@ -401,6 +403,16 @@ export const actions = {
     await saveNow()
   },
 
+  /**
+   * Take a newer document that was saved elsewhere (GitHub sync). Its updatedAt is kept, so it is
+   * not mistaken for a new local change. A loaded demo is left alone.
+   */
+  async adoptSynced(next: AppData): Promise<void> {
+    if (data().demo) return
+    replaceDocument({ ...next, demo: false })
+    await saveNow()
+  },
+
   /** Erase everything and start a fresh plan from today. */
   async resetAll(): Promise<void> {
     await storage().remove(STORAGE_KEYS.stash)
@@ -452,7 +464,8 @@ export const actions = {
 
   /** Write pending changes immediately (used when the page is being hidden). */
   flush(): void {
-    if (saveTimer) void saveNow()
+    if (saveTimer) void saveNow().then(flushSync)
+    else flushSync()
   },
 }
 
