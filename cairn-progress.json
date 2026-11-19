@@ -1,0 +1,49 @@
+{
+ "app": "cairn",
+ "version": 1,
+ "createdAt": 1795125348944,
+ "updatedAt": 1795126939422,
+ "settings": {
+  "startDate": "2026-11-05",
+  "targetDate": "2027-01-27",
+  "dailyReviewCap": 5,
+  "targets": {
+   "easy": 15,
+   "medium": 25,
+   "hard": 40
+  },
+  "mockMinutes": 45,
+  "sessionMinutes": 60
+ },
+ "problems": {},
+ "drills": [],
+ "mocks": [],
+ "timer": null,
+ "session": {
+  "date": "2026-11-19",
+  "budget": 60,
+  "items": [
+   {
+    "kind": "new",
+    "minutes": 20,
+    "reason": "New topic · Arrays & Hashing",
+    "slug": "contains-duplicate"
+   },
+   {
+    "kind": "new",
+    "minutes": 20,
+    "reason": "New topic · Arrays & Hashing",
+    "slug": "valid-anagram"
+   },
+   {
+    "kind": "new",
+    "minutes": 20,
+    "reason": "New topic · Arrays & Hashing",
+    "slug": "two-sum"
+   }
+  ],
+  "createdAt": 1795125349293
+ },
+ "demo": false,
+ "onboarded": true
+}
