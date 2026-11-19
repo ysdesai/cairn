@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795127287190,
+ "updatedAt": 1795127665712,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -215,13 +215,33 @@
     "pitfalls": "",
     "updatedAt": null
    }
+  },
+  "valid-parentheses": {
+   "attempts": [
+    {
+     "id": "3bf92c7fadcd",
+     "date": "2026-11-19",
+     "at": 1795127659558,
+     "rating": "easy",
+     "minutes": 6,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
   }
  },
  "drills": [],
  "mocks": [],
  "timer": {
-  "slug": "valid-parentheses",
-  "runningSince": 1795127287190,
+  "slug": "min-stack",
+  "runningSince": 1795127665712,
   "elapsedMs": 0
  },
  "session": null,
