@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795126959398,
+ "updatedAt": 1795127028174,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -45,25 +45,25 @@
   "budget": 60,
   "items": [
    {
-    "kind": "new",
-    "minutes": 20,
-    "reason": "New topic · Arrays & Hashing",
-    "slug": "contains-duplicate"
+    "kind": "review",
+    "slug": "contains-duplicate",
+    "minutes": 5,
+    "reason": "Waiting 10 days"
    },
    {
     "kind": "new",
+    "slug": "valid-anagram",
     "minutes": 20,
-    "reason": "New topic · Arrays & Hashing",
-    "slug": "valid-anagram"
+    "reason": "New topic · Arrays & Hashing"
    },
    {
     "kind": "new",
+    "slug": "two-sum",
     "minutes": 20,
-    "reason": "New topic · Arrays & Hashing",
-    "slug": "two-sum"
+    "reason": "New topic · Arrays & Hashing"
    }
   ],
-  "createdAt": 1795125349293
+  "createdAt": 1795127028173
  },
  "demo": false,
  "onboarded": true
