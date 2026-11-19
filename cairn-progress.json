@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795126939422,
+ "updatedAt": 1795126959398,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -15,7 +15,28 @@
   "mockMinutes": 45,
   "sessionMinutes": 60
  },
- "problems": {},
+ "problems": {
+  "contains-duplicate": {
+   "attempts": [
+    {
+     "id": "22637349aad3",
+     "date": "2026-11-06",
+     "at": 1795126959398,
+     "rating": "easy",
+     "minutes": 9,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  }
+ },
  "drills": [],
  "mocks": [],
  "timer": null,
