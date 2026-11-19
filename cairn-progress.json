@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795127028174,
+ "updatedAt": 1795127215967,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -35,36 +35,172 @@
     "pitfalls": "",
     "updatedAt": null
    }
+  },
+  "longest-consecutive-sequence": {
+   "attempts": [
+    {
+     "id": "f8c458e158ea",
+     "date": "2026-11-12",
+     "at": 1795127215959,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "valid-anagram": {
+   "attempts": [
+    {
+     "id": "2dac1d3c8ac3",
+     "date": "2026-11-14",
+     "at": 1795127215960,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "two-sum": {
+   "attempts": [
+    {
+     "id": "9e332b6c7dff",
+     "date": "2026-11-14",
+     "at": 1795127215961,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "group-anagrams": {
+   "attempts": [
+    {
+     "id": "0351fe2dbef3",
+     "date": "2026-11-15",
+     "at": 1795127215962,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "top-k-frequent-elements": {
+   "attempts": [
+    {
+     "id": "21f0b0b0777a",
+     "date": "2026-11-16",
+     "at": 1795127215963,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "product-of-array-except-self": {
+   "attempts": [
+    {
+     "id": "e4c2c8326d52",
+     "date": "2026-11-16",
+     "at": 1795127215964,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "valid-sudoku": {
+   "attempts": [
+    {
+     "id": "06c89bd810b5",
+     "date": "2026-11-16",
+     "at": 1795127215965,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "valid-palindrome": {
+   "attempts": [
+    {
+     "id": "2102ef8aeb0f",
+     "date": "2026-11-18",
+     "at": 1795127215966,
+     "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
   }
  },
  "drills": [],
  "mocks": [],
  "timer": null,
- "session": {
-  "date": "2026-11-19",
-  "budget": 60,
-  "items": [
-   {
-    "kind": "review",
-    "slug": "contains-duplicate",
-    "minutes": 5,
-    "reason": "Waiting 10 days"
-   },
-   {
-    "kind": "new",
-    "slug": "valid-anagram",
-    "minutes": 20,
-    "reason": "New topic · Arrays & Hashing"
-   },
-   {
-    "kind": "new",
-    "slug": "two-sum",
-    "minutes": 20,
-    "reason": "New topic · Arrays & Hashing"
-   }
-  ],
-  "createdAt": 1795127028173
- },
+ "session": null,
  "demo": false,
  "onboarded": true
 }
