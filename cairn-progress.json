@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795127215967,
+ "updatedAt": 1795127275281,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -183,6 +183,26 @@
      "date": "2026-11-18",
      "at": 1795127215966,
      "rating": "easy",
+     "minutes": null,
+     "mistakes": [],
+     "source": "manual"
+    }
+   ],
+   "notes": {
+    "insight": "",
+    "time": "",
+    "space": "",
+    "pitfalls": "",
+    "updatedAt": null
+   }
+  },
+  "encode-and-decode-strings": {
+   "attempts": [
+    {
+     "id": "85fcf6af9bf8",
+     "date": "2026-11-19",
+     "at": 1795127275281,
+     "rating": "struggled",
      "minutes": null,
      "mistakes": [],
      "source": "manual"
