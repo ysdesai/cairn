@@ -2,7 +2,7 @@
  "app": "cairn",
  "version": 1,
  "createdAt": 1795125348944,
- "updatedAt": 1795127275281,
+ "updatedAt": 1795127287190,
  "settings": {
   "startDate": "2026-11-05",
   "targetDate": "2027-01-27",
@@ -219,7 +219,11 @@
  },
  "drills": [],
  "mocks": [],
- "timer": null,
+ "timer": {
+  "slug": "valid-parentheses",
+  "runningSince": 1795127287190,
+  "elapsedMs": 0
+ },
  "session": null,
  "demo": false,
  "onboarded": true
